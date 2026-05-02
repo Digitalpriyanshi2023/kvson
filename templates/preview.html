@@ -6,13 +6,18 @@
     <title>Review Application | KVSON</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="shortcut icon" href="/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;800&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Oswald:wght@500&display=swap" rel="stylesheet">
     <style>
-        :root { --kv-red: #b30000; --kv-gold: #ffcc00; --kv-dark: #1a1a1a; }
+        :root { 
+            --primary: #8e0000; 
+            --gold: #d4af37; 
+            --dark: #0f172a; 
+            --light: #f8fafc;
+        }
         * { margin:0; padding:0; box-sizing:border-box; }
         body { 
-            font-family: 'Mukta', sans-serif; 
-            background: #f0f2f5; 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--light); 
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -24,52 +29,62 @@
             background: white;
             width: 100%;
             max-width: 600px;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            border-top: 8px solid var(--kv-red);
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+            border-top: 10px solid var(--primary);
         }
 
-        h2 { font-family: 'Oswald'; color: var(--kv-red); margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        h2 { 
+            font-family: 'Oswald'; 
+            color: var(--primary); 
+            margin-bottom: 30px; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            font-size: 2rem;
+        }
         
         .data-row {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #f9f9f9;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-        .label { font-weight: 800; color: #555; text-transform: capitalize; }
-        .value { color: var(--kv-dark); font-weight: 400; }
+        .label { font-weight: 800; color: #64748b; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+        .value { color: var(--dark); font-weight: 600; }
 
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-top: 30px;
+            margin-top: 40px;
         }
 
         .btn {
             border: none;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 18px;
+            border-radius: 12px;
             font-weight: 800;
             cursor: pointer;
             text-align: center;
             text-decoration: none;
             transition: 0.3s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .btn-confirm { background: var(--kv-red); color: white; }
-        .btn-confirm:hover { background: #8e0000; transform: translateY(-2px); }
+        .btn-confirm { background: var(--primary); color: white; }
+        .btn-confirm:hover { background: #6b0000; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(142, 0, 0, 0.2); }
 
         .btn-back { background: #e2e8f0; color: #475569; }
         .btn-back:hover { background: #cbd5e1; }
 
         .warning-text {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-top: 20px;
             text-align: center;
             font-style: italic;
         }
@@ -78,11 +93,12 @@
 <body>
 
 <div class="preview-card">
-    <h2>Review Your Details</h2>
+    <h2>Verify Your Identity</h2>
     
     <div id="preview-content">
         {% for key, value in data.items() %}
-            {% if value %} <div class="data-row">
+            {% if value and key != 'password' %} 
+            <div class="data-row">
                 <span class="label">{{ key.replace('_', ' ') }}:</span>
                 <span class="value">{{ value }}</span>
             </div>
@@ -97,11 +113,11 @@
 
         <div class="btn-group">
             <a href="javascript:history.back()" class="btn btn-back">Edit Details</a>
-            <button type="submit" class="btn btn-confirm">Confirm & Save</button>
+            <button type="submit" class="btn btn-confirm">Confirm & Enroll</button>
         </div>
     </form>
 
-    <p class="warning-text">By clicking confirm, your professional bio will be visible to the community directory.</p>
+    <p class="warning-text">By confirming, your professional profile will be submitted for verification by the sovereign chapter leads.</p>
 </div>
 
 </body>

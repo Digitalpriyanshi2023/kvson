@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Application | KVSON</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;800&family=Oswald:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root { --kv-red: #b30000; --kv-gold: #ffcc00; --kv-dark: #1a1a1a; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { 
+            font-family: 'Mukta', sans-serif; 
+            background: #f0f2f5; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .preview-card {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-top: 8px solid var(--kv-red);
+        }
+
+        h2 { font-family: 'Oswald'; color: var(--kv-red); margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f9f9f9;
+        }
+
+        .label { font-weight: 800; color: #555; text-transform: capitalize; }
+        .value { color: var(--kv-dark); font-weight: 400; }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-confirm { background: var(--kv-red); color: white; }
+        .btn-confirm:hover { background: #8e0000; transform: translateY(-2px); }
+
+        .btn-back { background: #e2e8f0; color: #475569; }
+        .btn-back:hover { background: #cbd5e1; }
+
+        .warning-text {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 15px;
+            text-align: center;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="preview-card">
+    <h2>Review Your Details</h2>
+    
+    <div id="preview-content">
+        {% for key, value in data.items() %}
+            {% if value %} <div class="data-row">
+                <span class="label">{{ key.replace('_', ' ') }}:</span>
+                <span class="value">{{ value }}</span>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <form action="/final_submit" method="POST">
+        {% for key, value in data.items() %}
+            <input type="hidden" name="{{ key }}" value="{{ value }}">
+        {% endfor %}
+
+        <div class="btn-group">
+            <a href="javascript:history.back()" class="btn btn-back">Edit Details</a>
+            <button type="submit" class="btn btn-confirm">Confirm & Save</button>
+        </div>
+    </form>
+
+    <p class="warning-text">By clicking confirm, your professional bio will be visible to the community directory.</p>
+</div>
+
+</body>
+</html>

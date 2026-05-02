@@ -2,24 +2,38 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os
 import requests
 from supabase import create_client, Client
+from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
 app = Flask(__name__, 
             template_folder=os.path.join(BASE_DIR, 'templates'), 
             static_folder=os.path.join(BASE_DIR, 'static'))
 
 # --- CONFIGURATION ---
+print(f"DEBUG: BASE_DIR is {BASE_DIR}")
+print(f"DEBUG: .env path is {os.path.join(BASE_DIR, '.env')}")
+print(f"DEBUG: .env exists: {os.path.exists(os.path.join(BASE_DIR, '.env'))}")
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") 
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 
+print(f"DEBUG: SUPABASE_URL present: {bool(SUPABASE_URL)}")
+print(f"DEBUG: SUPABASE_KEY present: {bool(SUPABASE_KEY)}")
+
 supabase: Client = None
 if SUPABASE_URL and SUPABASE_KEY:
-    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+    try:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print("DEBUG: Supabase client initialized successfully.")
+    except Exception as e:
+        print(f"DEBUG: Supabase client initialization FAILED: {e}")
 
 def get_db():
     if not supabase:
-        print("WARNING: Supabase credentials missing.")
+        print("CRITICAL: Supabase client is NONE. Check your Environment Variables.")
         return None
     return supabase
 

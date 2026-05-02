@@ -111,8 +111,9 @@ def delete_member(member_id):
     conn.close()
     return jsonify({"status": "deleted"})
 
+init_db()
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
 
     # Replace with your actual Gemini API Key

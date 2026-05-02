@@ -4,9 +4,8 @@ import os
 import requests
 
 
-app = Flask(__name__, template_folder='../templates', static_folder='../static')
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
-DATABASE = '/tmp/database.db' if os.environ.get('VERCEL') else 'database.db'
+app = Flask(__name__)
+DATABASE = 'database.db'
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)

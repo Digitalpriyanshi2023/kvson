@@ -3,489 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KVSON | The Sovereign Grand Portal</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="shortcut icon" href="/favicon.ico">
+    <title>KVSON | Sovereign Grandmaster Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Plus+Jakarta+Sans:wght@200;300;400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <style>
         :root {
             --royal-red: #8e0000;
             --nepal-gold: #d4af37;
             --deep-slate: #0f172a;
-            --glass: rgba(255, 255, 255, 0.95);
-            --accent: #f59e0b;
+            --glass-core: rgba(255, 255, 255, 0.98);
             --kinetic: cubic-bezier(0.23, 1, 0.32, 1);
+            --shadow-xl: 0 35px 60px -15px rgba(0, 0, 0, 0.2);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #0f172a; 
-            color: #f8fafc;
+            background: #f0f2f5; 
+            color: var(--deep-slate);
             overflow-x: hidden;
-            min-height: 100vh;
+            letter-spacing: -0.02em;
         }
 
-        /* --- BACKGROUND MESH --- */
-        .mesh-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(142, 0, 0, 0.15) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
-            z-index: -1;
-        }
-
-        /* --- NAVIGATION --- */
+        /* --- PRESTIGE NAVIGATION --- */
         nav {
-            position: fixed; top: 0; width: 100%; z-index: 1000;
-            padding: 1.5rem 6%;
+            position: fixed; top: 0; width: 100%; z-index: 9999;
+            background: rgba(15, 23, 42, 0.99);
+            backdrop-filter: blur(30px);
+            padding: 1.4rem 6%;
             display: flex; justify-content: space-between; align-items: center;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 5px solid var(--nepal-gold);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
         }
-        .logo h1 { font-family: 'Oswald'; font-size: 2.2rem; letter-spacing: 4px; color: #fff; text-transform: uppercase; }
-        .logo span { color: var(--nepal-gold); }
+        .logo h1 { font-family: 'Oswald'; color: #fff; letter-spacing: 6px; font-size: 2.5rem; text-transform: uppercase; }
+        .logo span { color: var(--nepal-gold); font-weight: 300; }
 
-        .nav-actions { display: flex; gap: 15px; }
+        .nav-links { display: flex; gap: 40px; list-style: none; }
+        .nav-links li { 
+            color: #94a3b8; font-weight: 800; font-size: 0.75rem; 
+            text-transform: uppercase; cursor: pointer; transition: 0.4s var(--kinetic);
+            letter-spacing: 2px; position: relative;
+        }
+        .nav-links li::after {
+            content: ''; position: absolute; bottom: -8px; left: 0; width: 0; height: 2px;
+            background: var(--nepal-gold); transition: 0.4s var(--kinetic);
+        }
+        .nav-links li:hover { color: #fff; }
+        .nav-links li:hover::after, .nav-links li.active::after { width: 100%; }
 
-        /* --- APP CONTAINER --- */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-            padding-top: 80px;
-        }
+        /* --- LAYOUT ENGINE --- */
+        .viewport { max-width: 1450px; margin: 140px auto 80px; padding: 0 40px; }
+        .page { display: none; }
+        .page.active { display: block; animation: flowIn 0.9s var(--kinetic) forwards; }
+        @keyframes flowIn { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: 280px;
-            background: rgba(15, 23, 42, 0.5);
-            border-right: 1px solid rgba(255,255,255,0.1);
-            padding: 40px 20px;
-            display: none; /* Shown when logged in */
-            flex-direction: column;
-            gap: 10px;
+        /* --- APEX UI COMPONENTS --- */
+        .grand-card { 
+            background: var(--glass-core); border-radius: 40px; padding: 60px; 
+            box-shadow: var(--shadow-xl); border: 1px solid rgba(255,255,255,1); 
+            margin-bottom: 50px; position: relative;
         }
-        .sidebar-item {
-            padding: 15px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex; align-items: center; gap: 12px;
-            color: #94a3b8; font-weight: 600; font-size: 0.9rem;
-        }
-        .sidebar-item:hover, .sidebar-item.active {
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-        }
-        .sidebar-item i { width: 20px; }
-
-        /* --- MAIN VIEWPORT --- */
-        .main-content {
-            flex: 1;
-            padding: 40px 6%;
-            overflow-y: auto;
+        .grand-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 12px;
+            background: linear-gradient(90deg, var(--royal-red), var(--nepal-gold), var(--royal-red));
+            border-radius: 40px 40px 0 0;
         }
 
-        /* --- VISITOR VIEW (LANDING) --- */
-        #visitor-view {
-            text-align: center;
-            padding-top: 100px;
-        }
-        .hero-title {
-            font-family: 'Oswald';
-            font-size: clamp(3rem, 10vw, 7rem);
-            line-height: 1;
-            margin-bottom: 20px;
-            background: linear-gradient(to bottom, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: var(--nepal-gold);
-            letter-spacing: 10px;
-            text-transform: uppercase;
-            font-weight: 800;
-            margin-bottom: 50px;
-        }
-
-        /* --- DASHBOARD CARDS --- */
-        .grand-card {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px;
-            padding: 40px;
-            backdrop-filter: blur(10px);
-            margin-bottom: 30px;
-        }
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        .stat-card {
-            background: rgba(255,255,255,0.03);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .stat-card h4 { color: var(--nepal-gold); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
-        .stat-card .value { font-size: 2.5rem; font-family: 'Oswald'; margin-top: 10px; }
-
-        /* --- BUTTONS --- */
         .btn {
-            padding: 14px 28px; border: none; border-radius: 12px; font-weight: 700;
-            cursor: pointer; transition: 0.4s var(--kinetic);
-            display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem;
-            text-transform: uppercase; letter-spacing: 1px;
+            padding: 20px 45px; border: none; border-radius: 20px; font-weight: 800; 
+            text-transform: uppercase; letter-spacing: 3px; cursor: pointer; transition: 0.6s var(--kinetic);
+            display: inline-flex; align-items: center; font-size: 0.85rem;
         }
-        .btn-gold { background: var(--nepal-gold); color: #000; }
-        .btn-gold:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 10px 30px rgba(212,175,55,0.3); }
-        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; }
-        .btn-outline:hover { background: rgba(255,255,255,0.1); }
+        .btn-royal { background: var(--royal-red); color: white; box-shadow: 0 15px 30px rgba(142,0,0,0.3); }
+        .btn-gold { background: var(--nepal-gold); color: white; box-shadow: 0 15px 30px rgba(212,175,55,0.3); }
+        .btn:hover { transform: translateY(-10px) scale(1.05); filter: brightness(1.2); }
 
-        /* --- TABLES --- */
-        .master-table { width: 100%; border-collapse: collapse; }
-        .master-table th { padding: 15px; text-align: left; color: #64748b; font-size: 0.75rem; text-transform: uppercase; }
-        .master-table td { padding: 20px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .role-badge {
-            padding: 4px 12px; border-radius: 6px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase;
+        /* --- HOME ARCHITECTURE --- */
+        .hero-chamber {
+            height: 75vh; border-radius: 50px;
+            background: linear-gradient(135deg, rgba(15,23,42,0.95), rgba(142,0,0,0.8)), url('https://images.unsplash.com/photo-1493934558415-9d19f0b2b4d2?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; border: 3px solid var(--nepal-gold); margin-bottom: 60px;
         }
+        .hero-chamber h1 { font-family: 'Oswald'; font-size: clamp(3rem, 12vw, 8rem); line-height: 0.9; margin-bottom: 25px; }
+        .hero-chamber p { font-size: 1.2rem; letter-spacing: 15px; color: var(--nepal-gold); font-weight: 800; text-transform: uppercase; }
+
+        /* --- DIRECTORY MASKING --- */
+        .directory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 40px; }
+        .member-card { 
+            background: white; border-radius: 35px; padding: 45px; transition: 0.6s var(--kinetic);
+            border: 2px solid transparent; position: relative; overflow: hidden;
+        }
+        .member-card:hover { transform: translateY(-15px); border-color: var(--nepal-gold); box-shadow: var(--shadow-xl); }
+        
+        .badge { padding: 12px 24px; border-radius: 14px; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
         .badge-admin { background: #fee2e2; color: #991b1b; }
         .badge-manager { background: #fef3c7; color: #92400e; }
         .badge-user { background: #dcfce7; color: #166534; }
 
-        /* --- MODAL --- */
-        .modal {
+        /* --- INPUT SYSTEM --- */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 35px; }
+        .input-box { margin-bottom: 25px; }
+        label { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; }
+        input, select { 
+            width: 100%; padding: 22px; border-radius: 20px; border: 2.5px solid #e2e8f0; 
+            font-family: inherit; font-size: 1.1rem; transition: 0.5s; background: #fff;
+        }
+        input:focus { border-color: var(--nepal-gold); box-shadow: 0 0 0 10px rgba(212, 175, 55, 0.08); }
+
+        /* --- ADMIN CONSOLE --- */
+        .master-table { width: 100%; border-collapse: separate; border-spacing: 0 20px; }
+        .master-table th { padding: 25px; text-align: left; font-family: 'Oswald'; font-size: 0.9rem; color: #94a3b8; text-transform: uppercase; }
+        .master-table td { padding: 35px 25px; background: white; transition: 0.4s; }
+        tr:hover td { background: #f8fafc; }
+        td:first-child { border-radius: 25px 0 0 25px; border-left: 8px solid var(--royal-red); }
+        td:last-child { border-radius: 0 25px 25px 0; }
+
+        /* --- SECURITY OVERLAY --- */
+        .lock-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            display: none; justify-content: center; align-items: center;
+            background: rgba(15,23,42,0.95); backdrop-filter: blur(40px);
+            z-index: 10000; display: none; justify-content: center; align-items: center;
+            color: white; text-align: center;
         }
-        .modal-content {
-            background: #1e293b;
-            width: 100%; max-width: 450px;
-            padding: 50px; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-        }
-
-        /* --- MEMBER GRID --- */
-        .member-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-        .member-card {
-            background: rgba(255,255,255,0.03);
-            border-radius: 25px; padding: 30px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.3s;
-        }
-        .member-card:hover { border-color: var(--nepal-gold); transform: translateY(-5px); }
-
-        /* --- CHATBOT --- */
-        .chat-btn {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 60px; height: 60px; background: var(--royal-red);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 30px rgba(142,0,0,0.5); cursor: pointer; z-index: 1000;
-        }
-
-        #view-enroll { max-width: 800px; margin: 0 auto; }
-
-        input, select, textarea {
-            width: 100%; padding: 16px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; color: #fff; font-family: inherit; margin-bottom: 20px;
-        }
-        input:focus { border-color: var(--nepal-gold); outline: none; }
     </style>
 </head>
 <body>
 
-<div class="mesh-bg"></div>
+<div id="security-lock" class="lock-screen">
+    <div style="max-width: 500px; padding: 40px;">
+        <h1 style="font-family:'Oswald'; font-size: 3rem; margin-bottom: 20px;">ACCESS RESTRICTED</h1>
+        <p style="color: var(--nepal-gold); letter-spacing: 5px; margin-bottom: 40px;">PRIVATE COMMUNITY DIRECTORY</p>
+        <button class="btn btn-gold" onclick="closeLock()">Return to Home</button>
+    </div>
+</div>
 
 <nav>
-    <div class="logo"><h1>KV<span>SON</span></h1></div>
-    <div class="nav-actions" id="nav-actions">
-        <button class="btn btn-outline" onclick="openModal('login')">Portal Login</button>
-        <button class="btn btn-gold" onclick="switchView('enroll')">Enroll Now</button>
+    <div class="logo"><h1>KV<span>SON.</span></h1></div>
+    <ul class="nav-links" id="main-nav"></ul>
+    <div id="auth-ctrl">
+        <button class="btn btn-gold" style="padding: 14px 28px; font-size: 0.75rem;" onclick="toggleAuth()" id="authBtn">Portal Login</button>
     </div>
 </nav>
 
-<div class="app-container">
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-item active" onclick="switchView('dashboard')"><i data-lucide="layout-dashboard"></i> Dashboard</div>
-        <div class="sidebar-item" onclick="switchView('directory')"><i data-lucide="users"></i> Community Wall</div>
-        <div class="sidebar-item" onclick="switchView('profile')"><i data-lucide="user"></i> My Identity</div>
-        <div id="admin-links">
-            <div class="sidebar-item" onclick="switchView('console')"><i data-lucide="shield"></i> Admin Console</div>
+<div class="viewport">
+    
+    <section id="view-home" class="page active">
+        <div class="hero-chamber">
+            <p>The Sovereign Assembly</p>
+            <h1>KAMLAPURI<br><span>VAISHYA</span></h1>
+            <div style="margin-top: 50px; display:flex; gap: 30px;">
+                <button class="btn btn-gold" onclick="route('register')">Enroll Membership</button>
+                <button class="btn btn-royal" onclick="route('directory')">Secure Directory</button>
+            </div>
         </div>
-        <div class="sidebar-item" style="margin-top: auto; color: #ef4444;" onclick="logout()"><i data-lucide="log-out"></i> Sign Out</div>
-    </aside>
+        
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; margin-top: -100px; padding: 0 60px;">
+            <div class="grand-card" style="padding: 40px; text-align:center; border-bottom: 8px solid var(--royal-red);">
+                <h2 style="font-family:'Oswald'; font-size: 3.5rem; color: var(--royal-red);" id="count-members">0</h2>
+                <p style="font-weight: 800; font-size: 0.75rem; letter-spacing: 3px;">VERIFIED CITIZENS</p>
+            </div>
+            <div class="grand-card" style="padding: 40px; text-align:center; border-bottom: 8px solid var(--nepal-gold);">
+                <h2 style="font-family:'Oswald'; font-size: 3.5rem; color: var(--deep-slate);">NEPAL</h2>
+                <p style="font-weight: 800; font-size: 0.75rem; letter-spacing: 3px;">NATIONAL CHAPTER</p>
+            </div>
+        </div>
+    </section>
 
-    <main class="main-content">
-        <!-- VISITOR VIEW -->
-        <section id="view-visitor" class="view">
-            <div id="visitor-view">
-                <p class="hero-subtitle">The Sovereign Assembly of</p>
-                <h1 class="hero-title">KAMLAPURI<br>VAISHYA</h1>
-                <div style="display: flex; gap: 20px; justify-content: center; margin-top: 40px;">
-                    <button class="btn btn-gold" style="padding: 20px 40px; font-size: 1rem;" onclick="switchView('enroll')">Request Enrollment</button>
-                    <button class="btn btn-outline" style="padding: 20px 40px;" onclick="switchView('directory')">Explore Community</button>
+    <section id="view-register" class="page">
+        <div class="grand-card">
+            <h2 style="font-family:'Oswald'; font-size: 3rem; color: var(--royal-red); margin-bottom: 50px;">Digital Identity Enrollment</h2>
+            <form onsubmit="handleRegistration(event)">
+                <div class="form-grid">
+                    <div class="input-box"><label>Secure Email</label><input type="email" id="f-email" required></div>
+                    <div class="input-box"><label>Access Key</label><input type="password" id="f-pass" required></div>
+                    <div class="input-box"><label>Identity Name</label><input type="text" id="f-name" required></div>
                 </div>
-            </div>
-        </section>
-
-        <!-- DASHBOARD VIEW -->
-        <section id="view-dashboard" class="view" style="display: none;">
-            <h2 style="font-family: 'Oswald'; font-size: 2.5rem; margin-bottom: 30px;">Welcome Back, <span id="user-greeting">Sovereign</span></h2>
-            
-            <div class="stat-grid">
-                <div class="stat-card"><h4>Verified Citizens</h4><div class="value" id="stat-total">--</div></div>
-                <div class="stat-card"><h4>National Chapters</h4><div class="value">07</div></div>
-                <div class="stat-card"><h4>Your Standing</h4><div class="value" id="user-role-stat">Member</div></div>
-            </div>
-
-            <div class="grand-card">
-                <h3 style="margin-bottom: 20px;">Community Intelligence</h3>
-                <p style="color: #94a3b8; line-height: 1.6;">The KVSON portal is your secure gateway to the global Kamlapuri Vaishya network. Connect with professionals, preserve heritage, and grow collectively.</p>
-            </div>
-        </section>
-
-        <!-- DIRECTORY VIEW -->
-        <section id="view-directory" class="view" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-                <h2 style="font-family: 'Oswald'; font-size: 2.5rem;">Sovereign Directory</h2>
-                <input type="text" placeholder="🔍 Search citizens..." id="search-dir" style="width: 300px; margin-bottom: 0;" oninput="renderDirectory()">
-            </div>
-            <div id="member-wall" class="member-grid"></div>
-        </section>
-
-        <!-- ENROLL VIEW -->
-        <section id="view-enroll" class="view" style="display: none;">
-            <div class="grand-card">
-                <h2 style="font-family: 'Oswald'; font-size: 2.5rem; margin-bottom: 40px; color: var(--nepal-gold);">Identity Enrollment</h2>
-                <form action="/final_submit" method="POST">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div><label>Full Legal Name</label><input name="full_name" required></div>
-                        <div><label>Email Address</label><input type="email" name="email" required></div>
-                        <div><label>Contact Number</label><input name="contact" required></div>
-                        <div><label>Set Access Key (Password)</label><input type="password" name="password" required></div>
-                    </div>
-                    <div><label>Home District</label><input name="district" required></div>
-                    <div><label>Occupation / Professional Role</label><input name="occupation" required></div>
-                    <div><label>Brief Bio / Lineage Data</label><textarea name="bio" rows="4"></textarea></div>
-                    <button type="submit" class="btn btn-gold" style="width: 100%;">Initiate Verification</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- ADMIN CONSOLE VIEW -->
-        <section id="view-console" class="view" style="display: none;">
-            <div class="grand-card">
-                <h2 style="font-family: 'Oswald'; font-size: 2.5rem; margin-bottom: 40px;">Command Console</h2>
-                <div style="overflow-x: auto;">
-                    <table class="master-table">
-                        <thead>
-                            <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr>
-                        </thead>
-                        <tbody id="admin-table-body"></tbody>
-                    </table>
+                <div class="form-grid">
+                    <div class="input-box"><label>Contact Line</label><input type="text" id="f-phone" required></div>
+                    <div class="input-box"><label>Home District</label><input type="text" id="f-dist" required></div>
+                    <div class="input-box"><label>Lineage (Father)</label><input type="text" id="f-father" required></div>
                 </div>
+                <div class="form-grid">
+                    <div class="input-box"><label>Profession</label><input type="text" id="f-occ" placeholder="Current Role"></div>
+                    <div class="input-box"><label>Gender</label><select id="f-gender"><option>Male</option><option>Female</option></select></div>
+                    <div class="input-box"><label>Verification Status</label><input type="text" value="Awaiting Admin Review" disabled style="background:#f1f5f9;"></div>
+                </div>
+                <button class="btn btn-royal" style="width:100%; height:80px; font-size: 1.1rem; margin-top: 30px;">Verify & Initiate Profile</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="view-directory" class="page">
+        <div class="grand-card" style="padding: 30px; margin-bottom: 50px;">
+            <input type="text" id="dirFilter" placeholder="🔍 Search Sovereign Database..." oninput="syncDirectory()" style="border:none; font-size:1.5rem; background:transparent;">
+        </div>
+        <div id="member-wall" class="directory-grid"></div>
+    </section>
+
+    <section id="view-admin" class="page">
+        <div class="grand-card">
+            <h2 style="font-family:'Oswald'; font-size: 3rem; color: var(--royal-red); margin-bottom: 40px;">Sovereign Command Console</h2>
+            <div style="overflow-x: auto;">
+                <table class="master-table">
+                    <thead>
+                        <tr><th>Identity</th><th>Contact</th><th>Tier</th><th>Command</th></tr>
+                    </thead>
+                    <tbody id="admin-deck"></tbody>
+                </table>
             </div>
-        </section>
-    </main>
-</div>
+        </div>
+    </section>
 
-<!-- LOGIN MODAL -->
-<div class="modal" id="modal-login">
-    <div class="modal-content">
-        <h2 style="font-family: 'Oswald'; font-size: 2rem; margin-bottom: 30px;">Access Portal</h2>
-        <div id="login-error" style="color: #ef4444; margin-bottom: 20px; display: none;"></div>
-        <input type="email" id="login-email" placeholder="Sovereign Email">
-        <input type="password" id="login-password" placeholder="Access Key">
-        <button class="btn btn-gold" style="width: 100%;" onclick="handleLogin()">Authorize Access</button>
-        <button class="btn btn-outline" style="width: 100%; margin-top: 10px;" onclick="closeModal()">Cancel</button>
-    </div>
-</div>
+    <section id="view-profile" class="page">
+        <div id="profile-gate" class="grand-card" style="max-width: 1000px; margin: 0 auto;"></div>
+    </section>
 
-<div class="chat-btn" onclick="toggleChat()"><i data-lucide="message-square"></i></div>
+</div>
 
 <script>
-    lucide.createIcons();
-    let currentUser = JSON.parse(localStorage.getItem('kvson_user')) || null;
-    let members = [];
+    // 1. DATABASE KERNEL
+    let db = JSON.parse(localStorage.getItem('kvson_grandmaster_v1')) || [
+        { 
+            id: 777, name: "Master Administrator", email: "admin@kvson.com", pass: "admin123", 
+            role: "admin", phone: "9800000000", dist: "Kathmandu", father: "Founder", 
+            occ: "Sovereign Lead", gender: "Male"
+        }
+    ];
 
-    // --- INITIALIZATION ---
-    function init() {
-        if(currentUser) {
-            applyUserSession();
-            switchView('dashboard');
+    let session = null;
+
+    // 2. NAVIGATION CORE
+    function route(p) {
+        // SECURITY GATE: Redirect Visitors trying to see Directory
+        if(p === 'directory' && !session) {
+            document.getElementById('security-lock').style.display = 'flex';
+            return;
+        }
+
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+        
+        document.getElementById('view-' + p).classList.add('active');
+        document.getElementById('nav-' + p)?.classList.add('active');
+        
+        if(p === 'directory') syncDirectory();
+        if(p === 'admin') syncAdmin();
+        if(p === 'home') document.getElementById('count-members').innerText = db.length;
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function closeLock() { document.getElementById('security-lock').style.display = 'none'; }
+
+    // 3. UI SYNCHRONIZER
+    function refreshLayout() {
+        const nav = document.getElementById('main-nav');
+        const authBtn = document.getElementById('authBtn');
+        
+        if(session) {
+            authBtn.innerText = `Terminate Session (${session.role})`;
+            let links = `<li id="nav-home" onclick="route('home')">Home</li>
+                         <li id="nav-directory" onclick="route('directory')">Directory</li>
+                         <li id="nav-profile" onclick="openMatrix(${session.id})">My Identity</li>`;
+            
+            if(['admin', 'manager'].includes(session.role)) {
+                links += `<li id="nav-admin" onclick="route('admin')">Console</li>`;
+            }
+            nav.innerHTML = links;
         } else {
-            switchView('visitor');
+            authBtn.innerText = "Portal Login";
+            nav.innerHTML = `<li id="nav-home" onclick="route('home')">Home</li>
+                             <li id="nav-register" onclick="route('register')">Enroll</li>
+                             <li onclick="route('directory')">Directory</li>`;
         }
-        fetchDirectory();
     }
 
-    function applyUserSession() {
-        document.getElementById('sidebar').style.display = 'flex';
-        document.getElementById('nav-actions').innerHTML = `
-            <div style="display:flex; align-items:center; gap:15px;">
-                <div style="text-align:right">
-                    <div style="font-weight:700; font-size:0.8rem;">${currentUser.full_name}</div>
-                    <div style="font-size:0.6rem; color:var(--nepal-gold); text-transform:uppercase;">${currentUser.role}</div>
-                </div>
-                <div style="width:40px; height:40px; background:var(--royal-red); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800;">
-                    ${currentUser.full_name.charAt(0)}
-                </div>
-            </div>
-        `;
-        document.getElementById('user-greeting').innerText = currentUser.full_name.split(' ')[0];
-        document.getElementById('user-role-stat').innerText = currentUser.role;
-        
-        // Admin visibility
-        document.getElementById('admin-links').style.display = (currentUser.role === 'admin' || currentUser.role === 'manager') ? 'block' : 'none';
-        
-        if(currentUser.role === 'admin') fetchAdminAll();
+    // 4. LOGIC OPERATIONS
+    function toggleAuth() {
+        if(session) {
+            session = null;
+            refreshLayout();
+            route('home');
+        } else {
+            const email = prompt("Encrypted Email:");
+            const pass = prompt("Access Key:");
+            const user = db.find(u => u.email === email && u.pass === pass);
+            if(user) {
+                session = user;
+                refreshLayout();
+                route('directory');
+            } else { alert("Authentication Failed."); }
+        }
     }
 
-    // --- NAVIGATION ENGINE ---
-    function switchView(viewId) {
-        document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-        document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    function handleRegistration(e) {
+        e.preventDefault();
+        const newUser = {
+            id: Date.now(),
+            name: document.getElementById('f-name').value,
+            email: document.getElementById('f-email').value,
+            pass: document.getElementById('f-pass').value,
+            phone: document.getElementById('f-phone').value,
+            dist: document.getElementById('f-dist').value,
+            occ: document.getElementById('f-occ').value || 'Member',
+            father: document.getElementById('f-father').value,
+            gender: document.getElementById('f-gender').value,
+            role: 'user'
+        };
+        db.push(newUser);
+        localStorage.setItem('kvson_grandmaster_v1', JSON.stringify(db));
+        alert("Sovereign Enrollment Complete.");
+        route('home');
+    }
+
+    function syncDirectory() {
+        const filter = document.getElementById('dirFilter').value.toLowerCase();
         
-        const target = document.getElementById('view-' + viewId);
-        if(target) {
-            target.style.display = 'block';
-            gsap.from(target, { opacity: 0, y: 20, duration: 0.5, ease: 'power2.out' });
-        }
-        
-        // Update sidebar active state
-        document.querySelectorAll('.sidebar-item').forEach(i => {
-            if(i.innerText.toLowerCase().includes(viewId)) i.classList.add('active');
+        // LOGIC: Filter out Admin from the list unless the current user is an Admin
+        const displayList = db.filter(u => {
+            const matchesSearch = u.name.toLowerCase().includes(filter) || u.dist.toLowerCase().includes(filter);
+            // IF current session is Admin, show everyone. IF not, hide anyone with 'admin' role.
+            if(session.role === 'admin') return matchesSearch;
+            return matchesSearch && u.role !== 'admin';
         });
 
-        if(viewId === 'directory') renderDirectory();
-        if(viewId === 'console') fetchAdminAll();
-    }
-
-    // --- AUTH LOGIC ---
-    async function handleLogin() {
-        const email = document.getElementById('login-email').value;
-        const password = document.getElementById('login-password').value;
-        const errorEl = document.getElementById('login-error');
-
-        try {
-            const res = await fetch('/api/login', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({email, password})
-            });
-            const data = await res.json();
-            
-            if(res.ok) {
-                currentUser = data;
-                localStorage.setItem('kvson_user', JSON.stringify(data));
-                closeModal();
-                applyUserSession();
-                switchView('dashboard');
-            } else {
-                errorEl.innerText = data.error;
-                errorEl.style.display = 'block';
-            }
-        } catch (e) {
-            errorEl.innerText = "Connection Failed";
-            errorEl.style.display = 'block';
-        }
-    }
-
-    function logout() {
-        localStorage.removeItem('kvson_user');
-        location.reload();
-    }
-
-    // --- DATA FETCHING ---
-    async function fetchDirectory() {
-        const res = await fetch('/api/directory');
-        members = await res.json();
-        document.getElementById('stat-total').innerText = members.length;
-        renderDirectory();
-    }
-
-    function renderDirectory() {
-        const query = document.getElementById('search-dir').value.toLowerCase();
-        const wall = document.getElementById('member-wall');
-        const filtered = members.filter(m => 
-            m.full_name.toLowerCase().includes(query) || 
-            m.district.toLowerCase().includes(query) || 
-            m.occupation.toLowerCase().includes(query)
-        );
-
-        wall.innerHTML = filtered.map(m => `
+        document.getElementById('member-wall').innerHTML = displayList.map(u => `
             <div class="member-card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
-                    <span class="role-badge badge-${m.role}">${m.role}</span>
-                    <i data-lucide="external-link" style="width:14px; color:#64748b; cursor:pointer;"></i>
+                <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:30px;">
+                    <div>
+                        <h3 style="font-family:'Oswald'; font-size:2rem; color:var(--deep-slate);">${u.name}</h3>
+                        <p style="color:var(--royal-red); font-weight:800; font-size:0.8rem; text-transform:uppercase;">${u.occ}</p>
+                    </div>
+                    <span class="badge badge-${u.role}">${u.role}</span>
                 </div>
-                <h3 style="font-family:'Oswald'; font-size:1.5rem; margin-bottom:5px;">${m.full_name}</h3>
-                <div style="color:var(--nepal-gold); font-weight:700; font-size:0.7rem; text-transform:uppercase; margin-bottom:15px;">${m.occupation}</div>
-                <p style="font-size:0.85rem; color:#94a3b8; line-height:1.5; margin-bottom:20px;">${m.bio || 'Verified Member of the Sovereign Assembly.'}</p>
-                <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; color:#64748b;">
-                    <i data-lucide="map-pin" style="width:14px;"></i> ${m.district}
-                </div>
+                <p style="color:#64748b; font-size:1rem; margin-bottom:30px;">📍 District: ${u.dist}</p>
+                <button class="btn btn-gold" style="width:100%; padding:15px;" onclick="openMatrix(${u.id})">Expand Profile</button>
             </div>
         `).join('');
-        lucide.createIcons();
     }
 
-    async function fetchAdminAll() {
-        if(!currentUser || currentUser.role !== 'admin') return;
-        const res = await fetch('/api/admin_all');
-        const data = await res.json();
-        const body = document.getElementById('admin-table-body');
-        body.innerHTML = data.map(m => `
+    function syncAdmin() {
+        document.getElementById('admin-deck').innerHTML = db.map(u => `
             <tr>
-                <td><strong>${m.full_name}</strong></td>
-                <td>${m.email}</td>
+                <td><strong>${u.name}</strong><br><small>${u.email}</small></td>
+                <td>${u.phone}</td>
+                <td><span class="badge badge-${u.role}">${u.role}</span></td>
                 <td>
-                    <select onchange="updateRole(${m.id}, this.value)" style="padding:5px; margin:0; background:rgba(255,255,255,0.05); font-size:0.7rem;">
-                        <option value="user" ${m.role==='user'?'selected':''}>USER</option>
-                        <option value="manager" ${m.role==='manager'?'selected':''}>MANAGER</option>
-                        <option value="admin" ${m.role==='admin'?'selected':''}>ADMIN</option>
-                    </select>
-                </td>
-                <td><span class="role-badge badge-user">Active</span></td>
-                <td>
-                    <button class="btn btn-outline" style="padding:8px 12px; font-size:0.6rem; color:#ef4444;" onclick="deleteMember(${m.id})">Terminate</button>
+                    ${session.role === 'admin' && u.id !== session.id ? 
+                    `<button class="btn btn-royal" style="padding:10px 20px; font-size:0.6rem;" onclick="elevate(${u.id})">${u.role === 'manager' ? 'Revoke Power' : 'Assign Manager'}</button>` 
+                    : '<small style="font-weight:900; color:#94a3b8;">LOCKED</small>'}
                 </td>
             </tr>
         `).join('');
     }
 
-    async function updateRole(id, role) {
-        await fetch('/api/update_role', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({id, role})
-        });
-        fetchAdminAll();
+    function elevate(id) {
+        const u = db.find(x => x.id === id);
+        u.role = u.role === 'user' ? 'manager' : 'user';
+        localStorage.setItem('kvson_grandmaster_v1', JSON.stringify(db));
+        syncAdmin();
     }
 
-    async function deleteMember(id) {
-        if(confirm("Confirm termination of identity?")) {
-            await fetch(`/api/delete/${id}`, { method: 'DELETE' });
-            fetchAdminAll();
-        }
+    function openMatrix(id) {
+        const u = db.find(x => x.id === id);
+        document.getElementById('profile-gate').innerHTML = `
+            <div style="display:flex; gap:60px; align-items:center; margin-bottom:60px;">
+                <div style="width:160px; height:160px; background:var(--royal-red); border-radius:45px; display:flex; align-items:center; justify-content:center; color:white; font-family:'Oswald'; font-size:4.5rem; border:8px solid var(--nepal-gold);">
+                    ${u.name.charAt(0)}
+                </div>
+                <div>
+                    <h2 style="font-family:'Oswald'; font-size:4.5rem; line-height:1;">${u.name}</h2>
+                    <span class="badge badge-${u.role}">${u.role} Verified Identity</span>
+                </div>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:50px;">
+                <div style="background:#f8fafc; padding:40px; border-radius:35px;">
+                    <label>Professional Intelligence</label>
+                    <p style="font-weight:900; font-size:1.3rem;">${u.occ}</p>
+                    <p style="margin-top:10px;">📞 ${u.phone}</p>
+                    <p>📧 ${u.email}</p>
+                </div>
+                <div style="background:#f8fafc; padding:40px; border-radius:35px;">
+                    <label>Heritage Data</label>
+                    <p><strong>Father:</strong> ${u.father}</p>
+                    <p><strong>Gender:</strong> ${u.gender}</p>
+                    <p><strong>Province:</strong> ${u.dist}</p>
+                </div>
+            </div>
+            <button class="btn btn-gold" style="width:100%; margin-top:50px;" onclick="route('directory')">Return to Sovereign Wall</button>
+        `;
+        route('profile');
     }
 
-    // --- UI HELPERS ---
-    function openModal(id) { document.getElementById('modal-' + id).style.display = 'flex'; }
-    function closeModal() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-    function toggleChat() { alert("Sovereign AI is initializing..."); }
-
-    init();
+    // Initialize
+    refreshLayout();
+    document.getElementById('count-members').innerText = db.length;
 </script>
-
 </body>
 </html>

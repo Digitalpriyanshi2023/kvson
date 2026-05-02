@@ -8,8 +8,20 @@
   ],
   "routes": [
     {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/static/favicon.png"
+    },
+    {
+      "src": "/favicon.png",
+      "dest": "/static/favicon.png"
+    },
+    {
       "src": "/(.*)",
-      "destination": "api/index.py"
+      "dest": "api/index.py"
     }
   ]
 }

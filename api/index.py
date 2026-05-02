@@ -65,10 +65,12 @@ def final_submit():
             "password": d.get('password'),
             "role": "user"
         }
-        db.table("members").insert(data).execute()
+        print(f"Attempting to insert into Supabase: {data}")
+        response = db.table("members").insert(data).execute()
+        print(f"Supabase Response: {response}")
         status = 'success'
     except Exception as e:
-        print(f"Supabase Insert Error: {e}")
+        print(f"CRITICAL: Supabase Insert Error: {e}")
         status = 'error'
     return redirect(url_for('index', status=status))
 

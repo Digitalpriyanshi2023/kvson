@@ -1,21 +1,10 @@
 {
   "version": 2,
-  "rewrites": [
-    {
-      "source": "/static/(.*)",
-      "destination": "/static/$1"
-    },
-    {
-      "source": "/favicon.ico",
-      "destination": "/static/favicon.png"
-    },
-    {
-      "source": "/favicon.png",
-      "destination": "/static/favicon.png"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/api/index.py"
-    }
+  "routes": [
+    { "src": "/api/directory", "dest": "/api/directory.js" },
+    { "src": "/api/login", "dest": "/api/login.js" },
+    { "src": "/api/enroll", "dest": "/api/enroll.js" },
+    { "src": "/api/admin/(.*)", "dest": "/api/admin.js" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }

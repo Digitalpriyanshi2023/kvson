@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVSON | The Sovereign Community</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #8e0000;
+            --primary-light: #fff1f1;
+            --gold: #d4af37;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --text-muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: var(--light); 
+            color: var(--dark); 
+            line-height: 1.6;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 1.2rem 6%; display: flex; justify-content: space-between; align-items: center;
+            background: var(--glass); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .logo { font-family: 'Oswald'; font-size: 1.8rem; color: var(--primary); letter-spacing: 3px; text-transform: uppercase; }
+        .logo span { color: var(--gold); }
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links li a { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .nav-links li a:hover { color: var(--primary); }
+
+        .btn-portal { background: var(--primary); color: white; padding: 10px 24px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; }
+        .btn-portal:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(142, 0, 0, 0.2); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 90vh;
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(142, 0, 0, 0.5)), url('/static/hero.png');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; color: white; padding: 0 20px;
+        }
+        .hero h1 { font-family: 'Oswald'; font-size: clamp(3rem, 10vw, 6rem); margin-bottom: 20px; text-transform: uppercase; line-height: 1; }
+        .hero p { font-size: 1.2rem; max-width: 800px; margin-bottom: 40px; color: rgba(255,255,255,0.9); font-weight: 300; }
+        .hero-btns { display: flex; gap: 20px; }
+
+        /* --- SECTION BASE --- */
+        section { padding: 100px 10%; }
+        .section-tag { color: var(--primary); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 15px; display: block; }
+        .section-title { font-family: 'Oswald'; font-size: 3rem; margin-bottom: 30px; line-height: 1.1; }
+
+        /* --- FEATURE (PICTURE DESCRIPTION) --- */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .img-box { border-radius: 20px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); position: relative; }
+        .img-box img { width: 100%; display: block; }
+
+        /* --- CARDS --- */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .info-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.3s; position: relative; }
+        .info-card:hover { transform: translateY(-10px); }
+        .icon-circle { width: 60px; height: 60px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; font-weight: 800; font-size: 1.4rem; }
+
+        /* --- FORMS --- */
+        .form-container { background: white; padding: 60px; border-radius: 30px; box-shadow: 0 40px 100px rgba(0,0,0,0.08); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        input, select, textarea { 
+            width: 100%; padding: 16px; border-radius: 10px; border: 1.5px solid var(--border); 
+            font-family: inherit; font-size: 1rem; margin-bottom: 20px;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 800; width: 100%; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .btn-submit:hover { opacity: 0.9; }
+
+        /* --- MODALS --- */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 450px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+
+        /* --- EXPANSIVE ADMIN CONSOLE DASHBOARD --- */
+        .modal-content.admin-panel { max-width: 1200px; width: 95vw; height: 85vh; display: flex; flex-direction: column; padding: 30px; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+        
+        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: var(--light); padding: 5px; border-radius: 10px; border: 1px solid var(--border); width: fit-content; }
+        .tab-btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; background: transparent; color: var(--text-muted); transition: 0.2s; display: flex; align-items: center; gap: 8px; }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .badge { background: var(--primary); color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 20px; font-weight: 800; }
+        .badge.gold { background: var(--gold); color: var(--dark); }
+
+        .admin-layout { display: grid; grid-template-columns: 340px 1fr; gap: 30px; flex: 1; overflow: hidden; }
+        
+        .admin-sidebar { border-right: 1px solid var(--border); padding-right: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .admin-search-box { position: relative; }
+        .admin-search-box input { padding-left: 40px; margin-bottom: 0; }
+        .admin-search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 16px; }
+        
+        .member-list-wrapper { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
+        .member-list-item { padding: 14px 18px; border-radius: 10px; border: 1.5px solid var(--border); cursor: pointer; transition: 0.2s; background: var(--light); text-align: left; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+        .member-list-item:hover, .member-list-item.active { border-color: var(--primary); background: var(--primary-light); }
+        .member-list-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--dark); margin-bottom: 2px; }
+        .member-list-item p { font-size: 0.8rem; color: var(--text-muted); }
+
+        .admin-main-view { overflow-y: auto; padding-left: 5px; display: flex; flex-direction: column; height: 100%; }
+        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); gap: 10px; text-align: center; }
+        
+        .detail-card { background: var(--light); border: 1px solid var(--border); border-radius: 15px; padding: 35px; margin-bottom: 20px; }
+        .detail-row { display: grid; grid-template-columns: 160px 1fr; margin-bottom: 16px; font-size: 0.95rem; border-bottom: 1px dashed rgba(0,0,0,0.04); padding-bottom: 10px; }
+        .detail-row:last-of-type { border-bottom: none; }
+        .detail-label { font-weight: 600; color: var(--text-muted); }
+        .admin-actions-pane { display: flex; gap: 15px; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
+        
+        .btn-action { padding: 12px 22px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: 0.2s; text-decoration: none; }
+        .btn-action.success { background: #dcfce7; color: #15803d; }
+        .btn-action.success:hover { background: #bbf7d0; }
+        .btn-action.danger { background: #fee2e2; color: #ef4444; }
+        .btn-action.danger:hover { background: #fca5a5; }
+        .btn-action.secondary { background: #f1f5f9; color: var(--dark); }
+        .btn-action.secondary:hover { background: #e2e8f0; }
+
+        /* --- FOOTER --- */
+        footer { background: var(--dark); color: white; padding: 80px 6% 40px; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center; color: #94a3b8; font-size: 0.8rem; }
+
+        @media (max-width: 900px) {
+            .admin-layout { grid-template-columns: 1fr; }
+            .admin-sidebar { border-right: none; padding-right: 0; max-height: 250px; }
+            .modal-content.admin-panel { height: 95vh; }
+        }
+        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .hero h1 { font-size: 3rem; } .nav-links { display: none; } }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">KV<span>SON</span></div>
+    <ul class="nav-links">
+        <li><a href="#about">The Vision</a></li>
+        <li><a href="#members">Community</a></li>
+        <li><a href="#enroll">Join Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div style="display:flex; gap:15px; align-items: center;">
+        <button class="btn-portal" id="authBtn" onclick="toggleAuthPortal()">Login</button>
+        <button class="btn-portal" style="background:var(--gold); color:var(--dark); display:none;" id="adminBtn" onclick="openModal('admin')">Console</button>
+    </div>
+</nav>
+
+<section class="hero">
+    <h1>Sovereign Unity.</h1>
+    <p>A prestigious community portal for the Kamlapuri Vaishya Global Network. Connecting heritage with modern opportunity.</p>
+    <div class="hero-btns">
+        <a href="#enroll" class="btn-portal" style="padding:18px 40px; font-size:1rem">Begin Enrollment</a>
+        <a href="#about" class="btn-portal" style="background:white; color:var(--dark); padding:18px 40px; font-size:1rem">Explore Vision</a>
+    </div>
+</section>
+
+<section id="about">
+    <div class="grid-2">
+        <div class="img-box">
+            <img src="/static/hero.png" alt="Community Vision" onerror="this.src='https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80'">
+        </div>
+        <div>
+            <span class="section-tag">Picture the Future</span>
+            <h2 class="section-title">The Sovereign Community Platform</h2>
+            <p style="margin-bottom:20px; color:#64748b; font-size:1.1rem;">Our platform serves as a digital sanctuary for verified members of the Kamlapuri Vaishya society. We bridge geographical gaps to foster professional networking, lineage preservation, and mutual growth.</p>
+            <div class="card-grid" style="grid-template-columns: 1fr;">
+                <div style="display:flex; gap:15px; margin-bottom:20px;">
+                    <i data-lucide="shield-check" style="color:var(--primary)"></i>
+                    <div><strong>Verified Network</strong><br><small>Every identity is authenticated by community leads.</small></div>
+                </div>
+                <div style="display:flex; gap:15px;">
+                    <i data-lucide="globe" style="color:var(--primary)"></i>
+                    <div><strong>Global Reach</strong><br><small>Connect with chapters across Nepal, India, and beyond.</small></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="members" style="background:#f1f5f9">
+    <div style="text-align:center; margin-bottom:60px;">
+        <span class="section-tag">Community Wall</span>
+        <h2 class="section-title">Honored Citizens</h2>
+    </div>
+    <div id="memberGrid" class="card-grid">
+        <p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Synchronizing community data...</p>
+    </div>
+</section>
+
+<section id="enroll">
+    <div class="grid-2">
+        <div>
+            <span class="section-tag">Membership</span>
+            <h2 class="section-title">Initiate Your Digital Identity</h2>
+            <p style="color:#64748b; margin-bottom:30px;">Become part of the sovereign network. Fill out the enrollment form to be reviewed by our community administrators. Once verified, your professional profile will be visible to our global directory.</p>
+            <div style="background:var(--primary); color:white; padding:30px; border-radius:20px;">
+                <h4 style="margin-bottom:10px;">Why Join?</h4>
+                <ul style="list-style:none; font-size:0.9rem; opacity:0.9; display: flex; flex-direction: column; gap: 8px;">
+                    <li>✓ Professional networking opportunities</li>
+                    <li>✓ Private community events access</li>
+                    <li>✓ Lineage & Heritage documentation</li>
+                    <li>✓ Secure identity verification</li>
+                </ul>
+            </div>
+        </div>
+        <div class="form-container">
+            <form id="enrollmentForm" onsubmit="handleEnrollment(event)">
+                <div class="form-grid">
+                    <input id="enrollName" placeholder="Full Name" required>
+                    <input type="email" id="enrollEmail" placeholder="Email Address" required>
+                </div>
+                <div class="form-grid">
+                    <input id="enrollContact" placeholder="Contact Number" required>
+                    <input type="password" id="enrollPassword" placeholder="Access Key" required>
+                </div>
+                <input id="enrollDistrict" placeholder="District / Chapter" required>
+                <input id="enrollOccupation" placeholder="Occupation / Role" required>
+                <textarea id="enrollBio" placeholder="Professional Bio / Heritage Description" rows="4"></textarea>
+                <button type="submit" class="btn-submit">Submit Enrollment</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section id="contact">
+    <div class="grid-2" style="background:var(--dark); color:white; border-radius:40px; padding:80px; overflow:hidden; position:relative;">
+        <div>
+            <span class="section-tag" style="color:var(--gold)">Connect</span>
+            <h2 class="section-title">Get in Touch</h2>
+            <p style="opacity:0.8; margin-bottom:40px;">Have questions about the KVSON network or membership? Our team is here to assist.</p>
+            <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+                <i data-lucide="mail"></i> <span>support@kvson.org</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <i data-lucide="map-pin"></i> <span>Kathmandu, Nepal</span>
+            </div>
+        </div>
+        <div class="form-container" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:40px;">
+            <form onsubmit="event.preventDefault(); alert('Message sent successfully!'); this.reset();">
+                <input style="background:transparent; color:white;" placeholder="Your Name" required>
+                <input type="email" style="background:transparent; color:white;" placeholder="Your Email" required>
+                <textarea style="background:transparent; color:white;" placeholder="How can we help?" required></textarea>
+                <button type="submit" class="btn-submit" style="background:var(--gold); color:var(--dark);">Send Message</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-grid">
+        <div>
+            <div class="logo">KV<span>SON</span></div>
+            <p style="margin-top:20px; color:#94a3b8;">The premiere digital hub for the global Kamlapuri Vaishya community.</p>
+        </div>
+        <div>
+            <h4 style="margin-bottom:20px;">Portal</h4>
+            <ul style="list-style:none; color:#94a3b8; line-height:2;">
+                <li><a href="#" style="color:inherit; text-decoration:none;">Home</a></li>
+                <li><a href="#about" style="color:inherit; text-decoration:none;">Vision</a></li>
+                <li><a href="#members" style="color:inherit; text-decoration:none;">Directory</a></li>
+            </ul>
+        </div>
+        <div>
+            <h4 style="margin-bottom:20px;">Legal</h4>
+            <ul style="list-style:none; color:#94a3b8; line-height:2;">
+                <li>Privacy Policy</li>
+                <li>Terms of Service</li>
+                <li>Membership Rules</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        &copy; 2026 KVSON Global. All Rights Reserved. | Managed by Sovereign Leads.
+    </div>
+</footer>
+
+<!-- MODAL: LOGIN -->
+<div class="modal" id="modal-login">
+    <div class="modal-content">
+        <h2 style="font-family:'Oswald'; margin-bottom:20px; text-transform: uppercase;">Portal Access</h2>
+        <div id="login-error" style="color:#ef4444; margin-bottom:15px; font-size:0.85rem; display:none; background:#fee2e2; padding:10px; border-radius:6px;"></div>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Access Key" required>
+        <button onclick="handleLogin()" class="btn-submit">Login</button>
+        <button onclick="closeModal()" style="background:none; border:none; width:100%; margin-top:15px; color:var(--text-muted); cursor:pointer; font-weight:600;">Cancel</button>
+    </div>
+</div>
+
+<!-- MODAL: ADMINISTRATIVE PLATFORM -->
+<div class="modal" id="modal-admin">
+    <div class="modal-content admin-panel">
+        <div class="admin-header">
+            <div>
+                <h2 style="font-family:'Oswald'; text-transform: uppercase; letter-spacing: 1px;">Sovereign Control Center</h2>
+                <p style="font-size:0.8rem; color:var(--text-muted)">Manage verification systems and community accounts.</p>
+            </div>
+            <button onclick="closeModal()" style="background:none; border:none; cursor:pointer; color:var(--text-muted)"><i data-lucide="x"></i></button>
+        </div>
+
+        <!-- System View Toggle Switches -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" id="tabRequests" onclick="switchAdminTab('requests')">
+                <i data-lucide="bell"></i> Enrollment Requests <span class="badge" id="countRequests">0</span>
+            </button>
+            <button class="tab-btn" id="tabDirectory" onclick="switchAdminTab('directory')">
+                <i data-lucide="shield-check"></i> Active Citizens <span class="badge gold" id="countCitizens">0</span>
+            </button>
+        </div>
+
+        <div class="admin-layout">
+            <!-- Left Navigation Roster -->
+            <div class="admin-sidebar">
+                <div class="admin-search-box">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="adminSearch" placeholder="Search profiles..." oninput="filterRoster()">
+                </div>
+                <div id="adminMemberList" class="member-list-wrapper">
+                    <!-- Dynamic Profiles Generated Here -->
+                </div>
+            </div>
+            
+            <!-- Right Detailed Operations Roster -->
+            <div class="admin-main-view" id="adminMainView">
+                <div class="empty-state">
+                    <i data-lucide="inbox" style="width:48px; height:48px;"></i>
+                    <p>Select a profile from the left pane to initialize processing actions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // System Target Endpoint Routing Architecture
+    const API_BASE = window.location.origin + '/api';
+
+    // Core Data Matrices
+    let appState = {
+        user: JSON.parse(localStorage.getItem('kvson_user')) || null,
+        currentTab: 'requests', // 'requests' | 'directory'
+        requestsRoster: [],
+        citizensRoster: [],
+        selectedProfileId: null
+    };
+
+    function init() {
+        lucide.createIcons();
+        evaluateAuthState();
+        fetchPublicDirectory();
+        
+        // --- PROTOTYPE BACKDOOR FOR INSTANT TESTING ---
+        // If you login with this email/password in the modal, it flags you immediately as an admin
+        window.handleLoginBackdoor = (email, password) => {
+            if (email === 'admin@kvson.org' && password === 'admin123') {
+                const mockAdmin = { full_name: "Sovereign Lead", email: "admin@kvson.org", role: "admin", token: "mock-jwt" };
+                localStorage.setItem('kvson_user', JSON.stringify(mockAdmin));
+                appState.user = mockAdmin;
+                location.reload();
+                return true;
+            }
+            return false;
+        };
+    }
+
+    function evaluateAuthState() {
+        const authBtn = document.getElementById('authBtn');
+        const adminBtn = document.getElementById('adminBtn');
+        if (appState.user) {
+            authBtn.innerText = 'Logout';
+            adminBtn.style.display = appState.user.role === 'admin' ? 'block' : 'none';
+        } else {
+            authBtn.innerText = 'Login';
+            adminBtn.style.display = 'none';
+        }
+    }
+
+    function toggleAuthPortal() {
+        if (appState.user) {
+            localStorage.removeItem('kvson_user');
+            appState.user = null;
+            location.reload();
+        } else {
+            openModal('login');
+        }
+    }
+
+    // --- PUBLIC INTERFACE SYSTEMS ---
+    async function fetchPublicDirectory() {
+        try {
+            const res = await fetch(`${API_BASE}/directory`);
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            
+            const grid = document.getElementById('memberGrid');
+            if(data.length === 0) {
+                grid.innerHTML = `<p style="text-align:center; grid-column:1/-1; color:var(--text-muted)">No verified citizens visible on the community wall.</p>`;
+                return;
+            }
+
+            grid.innerHTML = data.slice(0, 6).map(m => `
+                <div class="info-card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <div class="icon-circle">${m.full_name.charAt(0).toUpperCase()}</div>
+                        <span style="font-size:0.7rem; font-weight:800; color:var(--gold); text-transform:uppercase; border:1px solid var(--gold); padding:2px 8px; border-radius:4px;">${m.role}</span>
+                    </div>
+                    <h3 style="font-family:'Oswald'; margin-bottom:5px; text-transform:uppercase; font-size:1.3rem;">${m.full_name}</h3>
+                    <p style="color:var(--primary); font-weight:700; font-size:0.8rem; margin-bottom:15px; text-transform:uppercase;">${m.occupation}</p>
+                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">${m.bio || 'Verified member of the KVSON community.'}</p>
+                    <div style="display:flex; align-items:center; gap:8px; color:#94a3b8; font-size:0.8rem;">
+                        <i data-lucide="map-pin" style="width:14px; height:14px;"></i> ${m.district}
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        } catch (err) {
+            // Mock Data Array for visualization during setup phases
+            const mockPublicData = [
+                { full_name: "Priyanshi Shrestha", role: "admin", occupation: "Full-Stack System Architect", district: "Kathmandu", bio: "Building live architectural frameworks for community operational portals." },
+                { full_name: "Ram Narayan Vaishya", role: "member", occupation: "Merchant Director", district: "Parsa", bio: "Focused on expansion matrices within South Asian commerce circuits." }
+            ];
+            renderMockPublicGrid(mockPublicData);
+        }
+    }
+
+    function renderMockPublicGrid(arr) {
+        document.getElementById('memberGrid').innerHTML = arr.map(m => `
+            <div class="info-card">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <div class="icon-circle">${m.full_name.charAt(0)}</div>
+                    <span style="font-size:0.7rem; font-weight:800; color:var(--gold); text-transform:uppercase; border:1px solid var(--gold); padding:2px 8px; border-radius:4px;">${m.role}</span>
+                </div>
+                <h3 style="font-family:'Oswald'; margin-bottom:5px; text-transform:uppercase;">${m.full_name}</h3>
+                <p style="color:var(--primary); font-weight:700; font-size:0.8rem; margin-bottom:15px; text-transform:uppercase;">${m.occupation}</p>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">${m.bio}</p>
+                <div style="display:flex; align-items:center; gap:8px; color:#94a3b8; font-size:0.8rem;">
+                    <i data-lucide="map-pin" style="width:14px"></i> ${m.district}
+                </div>
+            </div>
+        `).join('');
+        lucide.createIcons();
+    }
+
+   async function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const errorDiv = document.getElementById('login-error');
+    errorDiv.style.display = 'none';
+    
+    // 1. Check local backdoor credentials BEFORE doing any server fetches
+    if (email === 'admin@kvson.org' && password === 'admin123') {
+        const mockAdmin = { 
+            full_name: "Sovereign Lead", 
+            email: "admin@kvson.org", 
+            role: "admin", 
+            token: "mock-jwt" 
+        };
+        localStorage.setItem('kvson_user', JSON.stringify(mockAdmin));
+        appState.user = mockAdmin;
+        closeModal();
+        evaluateAuthState();
+        location.reload();
+        return; // Exits early so no fetch request runs
+    }
+
+    // 2. Network handling (Only runs when you are ready to use a real database)
+    try {
+        const res = await fetch(`${API_BASE}/login`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email, password})
+        });
+
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new Error(`Server returned status ${res.status}. Your backend route is not built yet.`);
+        }
+
+        const data = await res.json();
+        if(res.ok) {
+            localStorage.setItem('kvson_user', JSON.stringify(data));
+            location.reload();
+        } else { 
+            throw new Error(data.error || 'Authentication denied'); 
+        }
+    } catch (err) {
+        errorDiv.innerText = err.message || 'Connection offline';
+        errorDiv.style.display = 'block';
+    }
+}
+
+    async function handleEnrollment(e) {
+        e.preventDefault();
+        const payload = {
+            full_name: document.getElementById('enrollName').value,
+            email: document.getElementById('enrollEmail').value,
+            contact: document.getElementById('enrollContact').value,
+            password: document.getElementById('enrollPassword').value,
+            district: document.getElementById('enrollDistrict').value,
+            occupation: document.getElementById('enrollOccupation').value,
+            bio: document.getElementById('enrollBio').value
+        };
+
+        try {
+            const res = await fetch(`${API_BASE}/enroll`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            if(res.ok) {
+                alert('Enrollment submitted! Your application is routing into the Admin Verification queue.');
+                document.getElementById('enrollmentForm').reset();
+            } else { alert('Submission validation failure.'); }
+        } catch(err) {
+            // Mock interaction logic for decoupled sandboxes
+            appState.requestsRoster.push({ id: Date.now(), ...payload, is_verified: false, role: 'member' });
+            alert('[Sandbox Mode] Request successfully captured into internal memory workspace array.');
+            document.getElementById('enrollmentForm').reset();
+        }
+    }
+
+    // --- ADMINISTRATIVE ENGINE SYSTEMS ---
+    async function syncAdminDataRosters() {
+        if (!appState.user || appState.user.role !== 'admin') return;
+        
+        try {
+            const res = await fetch(`${API_BASE}/admin/all-profiles`, {
+                headers: { 'Authorization': `Bearer ${appState.user.token}` }
+            });
+            const allProfiles = await res.json();
+            
+            // Supabase split filtering logic (verified vs non-verified states)
+            appState.requestsRoster = allProfiles.filter(p => !p.is_verified);
+            appState.citizensRoster = allProfiles.filter(p => p.is_verified);
+        } catch (err) {
+            // Seed arrays for development workflows
+            if(appState.requestsRoster.length === 0 && appState.citizensRoster.length === 0) {
+                appState.requestsRoster = [
+                    { id: 101, full_name: "Aman Prasad Shah", email: "aman@shah.com", contact: "+977-9851000000", district: "Birgunj", occupation: "Logistics Operator", bio: "Seeking registration connection with global trade clusters.", is_verified: false, role: 'member' }
+                ];
+                appState.citizensRoster = [
+                    { id: 1, full_name: "Priyanshi Shrestha", email: "admin@kvson.org", contact: "+977-9841000000", district: "Kathmandu", occupation: "Full-Stack Engineer", bio: "Sovereign data platform supervisor.", is_verified: true, role: 'admin' }
+                ];
+            }
+        }
+        
+        updateTabBadges();
+        renderSidebarRoster();
+    }
+
+    function updateTabBadges() {
+        document.getElementById('countRequests').innerText = appState.requestsRoster.length;
+        document.getElementById('countCitizens').innerText = appState.citizensRoster.length;
+    }
+
+    function switchAdminTab(targetTab) {
+        appState.currentTab = targetTab;
+        appState.selectedProfileId = null;
+        
+        document.getElementById('tabRequests').classList.toggle('active', targetTab === 'requests');
+        document.getElementById('tabDirectory').classList.toggle('active', targetTab === 'directory');
+        
+        document.getElementById('adminMainView').innerHTML = `
+            <div class="empty-state">
+                <i data-lucide="arrow-left" style="width:48px; height:48px;"></i>
+                <p>Select an entry from the tracking list layout.</p>
+            </div>
+        `;
+        
+        renderSidebarRoster();
+        lucide.createIcons();
+    }
+
+    function renderSidebarRoster() {
+        const container = document.getElementById('adminMemberList');
+        const activeArray = appState.currentTab === 'requests' ? appState.requestsRoster : appState.citizensRoster;
+        
+        if (activeArray.length === 0) {
+            container.innerHTML = `<div style="padding:40px 10px; text-align:center; color:var(--text-muted); font-size:0.9rem;">Roster view array empty.</div>`;
+            return;
+        }
+
+        container.innerHTML = activeArray.map(p => `
+            <button class="member-list-item ${appState.selectedProfileId === p.id ? 'active' : ''}" onclick="viewProfileDetails(${p.id})">
+                <div>
+                    <h4>${p.full_name}</h4>
+                    <p>${p.district} • ${p.occupation}</p>
+                </div>
+                <i data-lucide="chevron-right" style="width:16px; color:var(--text-muted)"></i>
+            </button>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function filterRoster() {
+        const query = document.getElementById('adminSearch').value.toLowerCase();
+        const baseArray = appState.currentTab === 'requests' ? appState.requestsRoster : appState.citizensRoster;
+        
+        const filtered = baseArray.filter(p => 
+            p.full_name.toLowerCase().includes(query) ||
+            p.district.toLowerCase().includes(query) ||
+            p.occupation.toLowerCase().includes(query)
+        );
+
+        const container = document.getElementById('adminMemberList');
+        if(filtered.length === 0) {
+            container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-muted); font-size:0.85rem;">No matching search matches.</div>`;
+            return;
+        }
+
+        container.innerHTML = filtered.map(p => `
+            <button class="member-list-item ${appState.selectedProfileId === p.id ? 'active' : ''}" onclick="viewProfileDetails(${p.id})">
+                <div>
+                    <h4>${p.full_name}</h4>
+                    <p>${p.district} • ${p.occupation}</p>
+                </div>
+                <i data-lucide="chevron-right" style="width:16px;"></i>
+            </button>
+        `).join('');
+        lucide.createIcons();
+    }
+
+    function viewProfileDetails(id) {
+        appState.selectedProfileId = id;
+        
+        // Dynamic active state layout rendering
+        document.querySelectorAll('.member-list-item').forEach((el, index) => {
+            const targetArray = appState.currentTab === 'requests' ? appState.requestsRoster : appState.citizensRoster;
+            el.classList.toggle('active', targetArray[index] && targetArray[index].id === id);
+        });
+
+        const activeArray = appState.currentTab === 'requests' ? appState.requestsRoster : appState.citizensRoster;
+        const record = activeArray.find(p => p.id === id);
+        if (!record) return;
+
+        const mainView = document.getElementById('adminMainView');
+
+        let operationalActions = '';
+        if (appState.currentTab === 'requests') {
+            operationalActions = `
+                <button class="btn-action success" onclick="processApplication(${record.id}, 'approve')">
+                    <i data-lucide="user-check"></i> Grant Verification & Citizenship
+                </button>
+                <button class="btn-action danger" onclick="processApplication(${record.id}, 'reject')">
+                    <i data-lucide="user-x"></i> Reject Request
+                </button>
+            `;
+        } else {
+            operationalActions = `
+                <button class="btn-action secondary" onclick="toggleAdministrativeAuthority(${record.id}, '${record.role}')">
+                    <i data-lucide="shield-alert"></i> Toggle Clearance Mode (${record.role.toUpperCase()})
+                </button>
+                <button class="btn-action danger" onclick="terminateCitizenRecord(${record.id})">
+                    <i data-lucide="trash-2"></i> Purge Account Array
+                </button>
+            `;
+        }
+
+        mainView.innerHTML = `
+            <div class="detail-card">
+                <span class="section-tag" style="color:var(--gold)">${appState.currentTab === 'requests' ? 'Pending Application Profile' : 'Verified Profile Matrix'}</span>
+                <h3 style="font-family:'Oswald'; font-size:2rem; text-transform:uppercase; color:var(--primary); margin-bottom:25px;">${record.full_name}</h3>
+                
+                <div class="detail-row"><span class="detail-label">Email Context:</span><span>${record.email}</span></div>
+                <div class="detail-row"><span class="detail-label">Contact Link:</span><span>${record.contact || 'Not Provided'}</span></div>
+                <div class="detail-row"><span class="detail-label">Chapter Location:</span><span>${record.district}</span></div>
+                <div class="detail-row"><span class="detail-label">Occupation Field:</span><span>${record.occupation}</span></div>
+                <div class="detail-row"><span class="detail-label">Identity Role Status:</span><strong>${record.role.toUpperCase()}</strong></div>
+                
+                <div style="margin-top:25px;">
+                    <span class="detail-label" style="display:block; margin-bottom:8px;">Bio & Heritage Context Data:</span>
+                    <div style="background:white; border:1px solid var(--border); padding:20px; border-radius:10px; font-size:0.95rem; color:#334155;">
+                        ${record.bio || 'Profile bio summary description missing from structural inputs.'}
+                    </div>
+                </div>
+            </div>
+            <div class="admin-actions-pane">
+                ${operationalActions}
+            </div>
+        `;
+        lucide.createIcons();
+    }
+
+    // --- LIVE CONTROLLER BACKEND INTEGRATION ROUTERS ---
+    async function processApplication(id, executionVector) {
+        if (!confirm(`Execute application context structural resolution: [${executionVector.toUpperCase()}]?`)) return;
+
+        try {
+            const res = await fetch(`${API_BASE}/admin/resolve-request`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appState.user.token}` },
+                body: JSON.stringify({ id, action: executionVector })
+            });
+            if (!res.ok) throw new Error();
+            alert('Resolution processed inside Supabase table arrays.');
+        } catch (err) {
+            // Local fallback simulation processing logic
+            const targetIdx = appState.requestsRoster.findIndex(p => p.id === id);
+            if (targetIdx > -1) {
+                const matchedRecord = appState.requestsRoster[targetIdx];
+                appState.requestsRoster.splice(targetIdx, 1);
+                if (executionVector === 'approve') {
+                    matchedRecord.is_verified = true;
+                    appState.citizensRoster.push(matchedRecord);
+                }
+            }
+        }
+        
+        resetMainViewInterface();
+        updateTabBadges();
+        renderSidebarRoster();
+        fetchPublicDirectory();
+    }
+
+    async function toggleAdministrativeAuthority(id, activeRole) {
+        const assignedTargetRole = activeRole === 'admin' ? 'member' : 'admin';
+        if (!confirm(`Toggle permission access layers to: ${assignedTargetRole.toUpperCase()}?`)) return;
+
+        try {
+            const res = await fetch(`${API_BASE}/admin/alter-role`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appState.user.token}` },
+                body: JSON.stringify({ id, role: assignedTargetRole })
+            });
+            if (!res.ok) throw new Error();
+        } catch (err) {
+            const citizen = appState.citizensRoster.find(p => p.id === id);
+            if (citizen) citizen.role = assignedTargetRole;
+        }
+
+        viewProfileDetails(id);
+        syncAdminDataRosters();
+    }
+
+    async function terminateCitizenRecord(id) {
+        if (!confirm("Permanently purge this profile container from the database? This deployment cannot be rolled back.")) return;
+
+        try {
+            const res = await fetch(`${API_BASE}/admin/purge-profile?id=${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${appState.user.token}` }
+            });
+            if (!res.ok) throw new Error();
+        } catch (err) {
+            const targetIdx = appState.citizensRoster.findIndex(p => p.id === id);
+            if (targetIdx > -1) appState.citizensRoster.splice(targetIdx, 1);
+        }
+
+        resetMainViewInterface();
+        updateTabBadges();
+        renderSidebarRoster();
+        fetchPublicDirectory();
+    }
+
+    function resetMainViewInterface() {
+        appState.selectedProfileId = null;
+        document.getElementById('adminMainView').innerHTML = `
+            <div class="empty-state">
+                <i data-lucide="check-circle" style="color:#15803d; width:48px; height:48px;"></i>
+                <p>Action deployed successfully. Roster structural array re-indexing complete.</p>
+            </div>
+        `;
+        lucide.createIcons();
+    }
+
+    // --- WINDOW CONTROLS ---
+    function openModal(id) { 
+        document.getElementById('modal-' + id).style.display = 'flex'; 
+        if(id === 'admin') {
+            switchAdminTab('requests');
+            syncAdminDataRosters(); 
+        }
+    }
+    
+    function closeModal() { 
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
+    }
+    
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    init();
+</script>
+
+</body>
+</html>

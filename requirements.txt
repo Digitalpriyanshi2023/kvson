@@ -1,5 +1,29 @@
-flask
-requests
-gunicorn
-supabase
-python-dotenv
+# =============================================================
+#  KVSON Portal — Python Requirements
+#  Used if you add a Python microservice or Flask utility layer.
+#  The main portal backend is Node.js (see package.json).
+# =============================================================
+
+# ----- Core Web Framework -----
+flask>=3.0.3
+
+# ----- HTTP / API Client -----
+requests>=2.32.3
+
+# ----- WSGI Production Server -----
+gunicorn>=22.0.0
+
+# ----- Supabase Python Client -----
+supabase>=2.5.0
+
+# ----- Environment Variable Loading -----
+python-dotenv>=1.0.1
+
+# ----- JWT (if Python API auth is needed) -----
+PyJWT>=2.8.0
+
+# ----- Data Validation (optional but recommended) -----
+pydantic>=2.7.0
+
+# ----- CORS Headers for Flask -----
+flask-cors>=4.0.1

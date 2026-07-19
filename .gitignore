@@ -1,0 +1,115 @@
+# =============================================================
+#  KVSON Portal — .gitignore
+#  Industry-standard exclusions for Node.js + Python project
+# =============================================================
+
+# ----- Environment & Secrets -----
+.env
+.env.local
+.env.production
+.env.staging
+# NOTE: .env.example is intentionally NOT ignored — it serves as
+# a public configuration template for developers.
+
+# ----- Node.js -----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnp
+.pnp.js
+
+# ----- Build Output -----
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+
+# ----- Logs -----
+logs/
+*.log
+*.log.*
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ----- Python / Django / Flask -----
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+MANIFEST
+*.pyc
+
+# ----- Jupyter / IPython -----
+.ipynb_checkpoints/
+*.ipynb
+
+# ----- OS & System -----
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ----- IDE & Editor -----
+.vscode/settings.json
+.vscode/launch.json
+.vscode/*.code-workspace
+.idea/
+*.swp
+*.swo
+*.swn
+*~
+.vim/
+.editorconfig
+
+# ----- Testing & Coverage -----
+coverage/
+.nyc_output/
+*.lcov
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# ----- Vercel -----
+.vercel/
+
+# ----- Miscellaneous -----
+*.zip
+*.tar.gz
+*.tgz
+*.bak
+*.tmp
+*.temp
+tmp/
+temp/
+archive/
+Naresh/

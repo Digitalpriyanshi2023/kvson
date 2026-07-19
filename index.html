@@ -1,795 +1,853 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-NP">
+
 <head>
+    <script>
+        // Immediately load saved theme and language to prevent visual flash
+        (function () {
+            const savedTheme = localStorage.getItem('kvson_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const savedLang = localStorage.getItem('kvson_lang') || 'ne';
+            document.documentElement.setAttribute('data-lang', savedLang);
+        })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KVSON | The Sovereign Community</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest"></script>
-    <style>
-        :root {
-            --primary: #8e0000;
-            --primary-light: #fff1f1;
-            --gold: #d4af37;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --border: #e2e8f0;
-            --text-muted: #64748b;
-            --glass: rgba(255, 255, 255, 0.95);
+    <meta name="description"
+        content="Official bilingual community portal of Kamlapuri Vaishya Samaj, Nepal. Members can log in, update profiles, discover events, and connect with the wider community.">
+    <meta name="keywords"
+        content="Kamlapuri Vaishya Samaj Nepal, कमलापुरी वैश्य समाज नेपाल, Vaishya community Nepal, Nepal community portal, वैश्य समाज, member portal Nepal">
+    <meta name="author" content="Kamlapuri Vaishya Samaj Nepal">
+    <meta property="og:title" content="कमलापुरी वैश्य समाज, नेपाल">
+    <meta property="og:description" content="सदस्य, परिवार, परम्परा र अवसरलाई जोड्ने आधुनिक समुदाय पोर्टल।">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/static/hero.png">
+    <meta name="theme-color" content="#8f1d1d">
+    <title>कमलापुरी वैश्य समाज, नेपाल | Official Community Portal</title>
+
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="shortcut icon" href="favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons Script -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js" defer></script>
+
+    <!-- JSON-LD Structured SEO Schema -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "कमलापुरी वैश्य समाज, नेपाल",
+            "alternateName": "Kamlapuri Vaishya Samaj Nepal",
+            "url": "https://kvson.org",
+            "logo": "https://kvson.org/favicon.png",
+            "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Kathmandu",
+                "addressCountry": "NP"
+            },
+            "sameAs": []
         }
+    </script>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background: var(--light); 
-            color: var(--dark); 
-            line-height: 1.6;
-        }
-
-        /* --- NAVIGATION --- */
-        nav {
-            position: fixed; top: 0; width: 100%; z-index: 1000;
-            padding: 1.2rem 6%; display: flex; justify-content: space-between; align-items: center;
-            background: var(--glass); backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        .logo { font-family: 'Oswald'; font-size: 1.8rem; color: var(--primary); letter-spacing: 3px; text-transform: uppercase; }
-        .logo span { color: var(--gold); }
-        .nav-links { display: flex; gap: 30px; list-style: none; }
-        .nav-links li a { text-decoration: none; color: var(--dark); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-        .nav-links li a:hover { color: var(--primary); }
-
-        .btn-portal { background: var(--primary); color: white; padding: 10px 24px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; }
-        .btn-portal:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(142, 0, 0, 0.2); }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            height: 90vh;
-            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(142, 0, 0, 0.5)), url('/static/hero.png');
-            background-size: cover; background-position: center;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; color: white; padding: 0 20px;
-        }
-        .hero h1 { font-family: 'Oswald'; font-size: clamp(3rem, 10vw, 6rem); margin-bottom: 20px; text-transform: uppercase; line-height: 1; }
-        .hero p { font-size: 1.2rem; max-width: 800px; margin-bottom: 40px; color: rgba(255,255,255,0.9); font-weight: 300; }
-        .hero-btns { display: flex; gap: 20px; }
-
-        /* --- SECTION BASE --- */
-        section { padding: 100px 10%; }
-        .section-tag { color: var(--primary); font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 15px; display: block; }
-        .section-title { font-family: 'Oswald'; font-size: 3rem; margin-bottom: 30px; line-height: 1.1; }
-
-        /* --- FEATURE (PICTURE DESCRIPTION) --- */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-        .img-box { border-radius: 20px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); position: relative; }
-        .img-box img { width: 100%; display: block; }
-
-        /* --- CARDS --- */
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .info-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.3s; position: relative; }
-        .info-card:hover { transform: translateY(-10px); }
-        .icon-circle { width: 60px; height: 60px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; font-weight: 800; font-size: 1.4rem; }
-
-        /* --- FORMS --- */
-        .form-container { background: white; padding: 60px; border-radius: 30px; box-shadow: 0 40px 100px rgba(0,0,0,0.08); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        input, select, textarea { 
-            width: 100%; padding: 16px; border-radius: 10px; border: 1.5px solid var(--border); 
-            font-family: inherit; font-size: 1rem; margin-bottom: 20px;
-        }
-        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; }
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 10px; font-weight: 800; width: 100%; cursor: pointer; font-size: 1rem; transition: 0.2s; }
-        .btn-submit:hover { opacity: 0.9; }
-
-        /* --- MODALS --- */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 450px; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-
-        /* --- EXPANSIVE ADMIN CONSOLE DASHBOARD --- */
-        .modal-content.admin-panel { max-width: 1200px; width: 95vw; height: 85vh; display: flex; flex-direction: column; padding: 30px; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
-        
-        .admin-tabs { display: flex; gap: 10px; margin-bottom: 20px; background: var(--light); padding: 5px; border-radius: 10px; border: 1px solid var(--border); width: fit-content; }
-        .tab-btn { padding: 10px 20px; border-radius: 8px; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; background: transparent; color: var(--text-muted); transition: 0.2s; display: flex; align-items: center; gap: 8px; }
-        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .badge { background: var(--primary); color: white; font-size: 0.75rem; padding: 2px 8px; border-radius: 20px; font-weight: 800; }
-        .badge.gold { background: var(--gold); color: var(--dark); }
-
-        .admin-layout { display: grid; grid-template-columns: 340px 1fr; gap: 30px; flex: 1; overflow: hidden; }
-        
-        .admin-sidebar { border-right: 1px solid var(--border); padding-right: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .admin-search-box { position: relative; }
-        .admin-search-box input { padding-left: 40px; margin-bottom: 0; }
-        .admin-search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 16px; }
-        
-        .member-list-wrapper { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
-        .member-list-item { padding: 14px 18px; border-radius: 10px; border: 1.5px solid var(--border); cursor: pointer; transition: 0.2s; background: var(--light); text-align: left; width: 100%; display: flex; justify-content: space-between; align-items: center; }
-        .member-list-item:hover, .member-list-item.active { border-color: var(--primary); background: var(--primary-light); }
-        .member-list-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--dark); margin-bottom: 2px; }
-        .member-list-item p { font-size: 0.8rem; color: var(--text-muted); }
-
-        .admin-main-view { overflow-y: auto; padding-left: 5px; display: flex; flex-direction: column; height: 100%; }
-        .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); gap: 10px; text-align: center; }
-        
-        .detail-card { background: var(--light); border: 1px solid var(--border); border-radius: 15px; padding: 35px; margin-bottom: 20px; }
-        .detail-row { display: grid; grid-template-columns: 160px 1fr; margin-bottom: 16px; font-size: 0.95rem; border-bottom: 1px dashed rgba(0,0,0,0.04); padding-bottom: 10px; }
-        .detail-row:last-of-type { border-bottom: none; }
-        .detail-label { font-weight: 600; color: var(--text-muted); }
-        .admin-actions-pane { display: flex; gap: 15px; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
-        
-        .btn-action { padding: 12px 22px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: 0.2s; text-decoration: none; }
-        .btn-action.success { background: #dcfce7; color: #15803d; }
-        .btn-action.success:hover { background: #bbf7d0; }
-        .btn-action.danger { background: #fee2e2; color: #ef4444; }
-        .btn-action.danger:hover { background: #fca5a5; }
-        .btn-action.secondary { background: #f1f5f9; color: var(--dark); }
-        .btn-action.secondary:hover { background: #e2e8f0; }
-
-        /* --- FOOTER --- */
-        footer { background: var(--dark); color: white; padding: 80px 6% 40px; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 50px; margin-bottom: 50px; }
-        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 30px; text-align: center; color: #94a3b8; font-size: 0.8rem; }
-
-        @media (max-width: 900px) {
-            .admin-layout { grid-template-columns: 1fr; }
-            .admin-sidebar { border-right: none; padding-right: 0; max-height: 250px; }
-            .modal-content.admin-panel { height: 95vh; }
-        }
-        @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } .hero h1 { font-size: 3rem; } .nav-links { display: none; } }
-    </style>
+    <!-- Modular Layout Sheet -->
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
+
 <body>
+    <a class="skip-link" href="#main">मुख्य सामग्रीमा जानुहोस्</a>
 
-<nav>
-    <div class="logo">KV<span>SON</span></div>
-    <ul class="nav-links">
-        <li><a href="#about">The Vision</a></li>
-        <li><a href="#members">Community</a></li>
-        <li><a href="#enroll">Join Us</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-    <div style="display:flex; gap:15px; align-items: center;">
-        <button class="btn-portal" id="authBtn" onclick="toggleAuthPortal()">Login</button>
-        <button class="btn-portal" style="background:var(--gold); color:var(--dark); display:none;" id="adminBtn" onclick="openModal('admin')">Console</button>
-    </div>
-</nav>
+    <header class="site-header">
+        <nav class="nav" aria-label="Primary navigation">
+            <a class="brand" href="#home" aria-label="कमलापुरी वैश्य समाज, नेपाल">
+                <span class="brand-mark"><img src="favicon.png" alt="" aria-hidden="true"></span>
+                <span class="brand-text">
+                    <strong>कमलापुरी वैश्य समाज, नेपाल</strong>
+                    <span class="lang-en">Kamlapuri Vaishya Samaj Nepal</span>
+                </span>
+            </a>
 
-<section class="hero">
-    <h1>Sovereign Unity.</h1>
-    <p>A prestigious community portal for the Kamlapuri Vaishya Global Network. Connecting heritage with modern opportunity.</p>
-    <div class="hero-btns">
-        <a href="#enroll" class="btn-portal" style="padding:18px 40px; font-size:1rem">Begin Enrollment</a>
-        <a href="#about" class="btn-portal" style="background:white; color:var(--dark); padding:18px 40px; font-size:1rem">Explore Vision</a>
-    </div>
-</section>
+            <ul class="nav-links" id="navLinks">
+                <li>
+                    <a href="#about">
+                        <span class="lang-en">About</span><span class="lang-sep"> / </span><span
+                            class="lang-ne">समाज</span>
+                        <span class="nav-chevron">▾</span>
+                    </a>
+                    <ul class="nav-dropdown" role="menu">
+                        <li>
+                            <a href="#about" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="landmark"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">Our Samaj</strong>
+                                    <strong class="lang-ne">हाम्रो समाज</strong>
+                                    <span class="lang-en">History & mission</span>
+                                    <span class="lang-ne">इतिहास र उद्देश्य</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#services" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="layout-grid"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">Portal Features</strong>
+                                    <strong class="lang-ne">पोर्टल सुविधाहरू</strong>
+                                    <span class="lang-en">What this portal offers</span>
+                                    <span class="lang-ne">पोर्टलका विशेषताहरू</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dd-divider">
+                        </li>
+                        <li>
+                            <a href="#contact" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="phone"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">Contact Us</strong>
+                                    <strong class="lang-ne">सम्पर्क</strong>
+                                    <span class="lang-en">Get in touch with the team</span>
+                                    <span class="lang-ne">हाम्रो टोलीसँग सम्पर्क</span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#services">
+                        <span class="lang-en">Services</span><span class="lang-sep"> / </span><span
+                            class="lang-ne">सेवा</span>
+                        <span class="nav-chevron">▾</span>
+                    </a>
+                    <ul class="nav-dropdown" role="menu">
+                        <li>
+                            <a href="#services" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="id-card"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">Member Profile</strong>
+                                    <strong class="lang-ne">सदस्य प्रोफाइल</strong>
+                                    <span class="lang-en">Update your information</span>
+                                    <span class="lang-ne">विवरण अद्यावधिक गर्नुहोस्</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#directory" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="users-round"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">Member Directory</strong>
+                                    <strong class="lang-ne">सदस्य निर्देशिका</strong>
+                                    <span class="lang-en">Verified community records</span>
+                                    <span class="lang-ne">प्रमाणित सदस्य विवरण</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#events" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="megaphone"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">News & Events</strong>
+                                    <strong class="lang-ne">समाचार र कार्यक्रम</strong>
+                                    <span class="lang-en">Notices & programs</span>
+                                    <span class="lang-ne">सूचना तथा कार्यक्रम</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dd-divider">
+                        </li>
+                        <li>
+                            <a href="#join" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="user-plus"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">Join Membership</strong>
+                                    <strong class="lang-ne">सदस्य बन्नुहोस्</strong>
+                                    <span class="lang-en">Apply to become a member</span>
+                                    <span class="lang-ne">नयाँ सदस्यता फारम</span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#directory"><span class="lang-en">Members</span><span class="lang-sep"> / </span><span
+                            class="lang-ne">सदस्य</span></a></li>
+                <li><a href="#events"><span class="lang-en">Events</span><span class="lang-sep"> / </span><span
+                            class="lang-ne">कार्यक्रम</span></a></li>
+                <li>
+                    <a href="#join">
+                        <span class="lang-en">Join</span><span class="lang-sep"> / </span><span
+                            class="lang-ne">सदस्यता</span>
+                        <span class="nav-chevron">▾</span>
+                    </a>
+                    <ul class="nav-dropdown" role="menu">
+                        <li>
+                            <a href="#join" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="file-pen-line"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">Apply Online</strong>
+                                    <strong class="lang-ne">अनलाइन आवेदन</strong>
+                                    <span class="lang-en">Fill the membership form</span>
+                                    <span class="lang-ne">सदस्यता फारम भर्नुहोस्</span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#services" role="menuitem">
+                                <span class="dd-icon"><i data-lucide="badge-check"></i></span>
+                                <span class="dd-label">
+                                    <strong class="lang-en">Member Benefits</strong>
+                                    <strong class="lang-ne">सदस्यताका फाइदाहरू</strong>
+                                    <span class="lang-en">What you get as a member</span>
+                                    <span class="lang-ne">सदस्यता प्राप्तिका लाभहरू</span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#contact"><span class="lang-en">Contact</span><span class="lang-sep"> / </span><span
+                            class="lang-ne">सम्पर्क</span></a></li>
+            </ul>
 
-<section id="about">
-    <div class="grid-2">
-        <div class="img-box">
-            <img src="/static/hero.png" alt="Community Vision" onerror="this.src='https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=800&q=80'">
-        </div>
-        <div>
-            <span class="section-tag">Picture the Future</span>
-            <h2 class="section-title">The Sovereign Community Platform</h2>
-            <p style="margin-bottom:20px; color:#64748b; font-size:1.1rem;">Our platform serves as a digital sanctuary for verified members of the Kamlapuri Vaishya society. We bridge geographical gaps to foster professional networking, lineage preservation, and mutual growth.</p>
-            <div class="card-grid" style="grid-template-columns: 1fr;">
-                <div style="display:flex; gap:15px; margin-bottom:20px;">
-                    <i data-lucide="shield-check" style="color:var(--primary)"></i>
-                    <div><strong>Verified Network</strong><br><small>Every identity is authenticated by community leads.</small></div>
+            <div class="nav-actions">
+                <!-- Theme Toggle Button -->
+                <button class="icon-button theme-toggle" type="button" id="themeToggle" aria-label="Toggle theme">
+                    <i data-lucide="sun" class="sun-icon"></i>
+                    <i data-lucide="moon" class="moon-icon"></i>
+                </button>
+
+                <!-- Language Selector Dropdown -->
+                <div class="dropdown language-dropdown">
+                    <button class="icon-button dropdown-toggle" type="button" id="langSelector" aria-haspopup="true"
+                        aria-expanded="false" aria-label="Select Language">
+                        <i data-lucide="globe-2"></i>
+                    </button>
+                    <ul class="dropdown-menu" id="langDropdownMenu" role="menu">
+                        <li role="none"><button type="button" class="dropdown-item" data-lang="ne"
+                                role="menuitem">नेपाली (Nepali)</button></li>
+                        <li role="none"><button type="button" class="dropdown-item" data-lang="en"
+                                role="menuitem">English</button></li>
+                    </ul>
                 </div>
-                <div style="display:flex; gap:15px;">
-                    <i data-lucide="globe" style="color:var(--primary)"></i>
-                    <div><strong>Global Reach</strong><br><small>Connect with chapters across Nepal, India, and beyond.</small></div>
+
+                <button class="icon-button menu-button" type="button" id="menuButton" aria-expanded="false"
+                    aria-controls="navLinks" aria-label="Open menu">
+                    <i data-lucide="menu"></i>
+                </button>
+                <!-- Smart Account Dropdown -->
+                <div class="dropdown auth-dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="authSelector" aria-haspopup="true"
+                        aria-expanded="false" aria-label="Account Options">
+                        <i data-lucide="user"></i>
+                        <span class="auth-label-current">
+                            <span class="lang-en">Account</span><span class="lang-ne">खाता</span>
+                        </span>
+                        <i data-lucide="chevron-down" class="dropdown-chevron"></i>
+                    </button>
+                    <ul class="dropdown-menu" id="authDropdownMenu" role="menu">
+                        <!-- Logged out options -->
+                        <li role="none" class="logged-out-only">
+                            <button type="button" class="dropdown-item" data-open-modal="login" role="menuitem">
+                                <i data-lucide="log-in"></i>
+                                <span class="lang-en">Sign In</span><span class="lang-ne">लग-इन</span>
+                            </button>
+                        </li>
+                        <li role="none" class="logged-out-only">
+                            <a href="#join" class="dropdown-item" role="menuitem" id="signUpTrigger">
+                                <i data-lucide="user-plus"></i>
+                                <span class="lang-en">Sign Up</span><span class="lang-ne">दर्ता गर्नुहोस्</span>
+                            </a>
+                        </li>
+                        <!-- Logged in options -->
+                        <li role="none" class="logged-in-only" hidden>
+                            <button type="button" class="dropdown-item" id="btnDashboardProfile" role="menuitem">
+                                <i data-lucide="user-round"></i>
+                                <span class="lang-en">My Profile</span><span class="lang-ne">मेरो प्रोफाइल</span>
+                            </button>
+                        </li>
+                        <li role="none" class="logged-in-only" hidden>
+                            <button type="button" class="dropdown-item" id="btnDashboardAdmin" role="menuitem" hidden>
+                                <i data-lucide="layout-dashboard"></i>
+                                <span class="lang-en">Admin Dashboard</span><span class="lang-ne">प्रशासक प्यानल</span>
+                            </button>
+                        </li>
+                        <li role="none" class="logged-in-only" hidden>
+                            <hr class="dd-divider">
+                        </li>
+                        <li role="none" class="logged-in-only" hidden>
+                            <button type="button" class="dropdown-item" id="btnDashboardLogout" role="menuitem"
+                                style="color: var(--danger);">
+                                <i data-lucide="log-out"></i>
+                                <span class="lang-en">Logout</span><span class="lang-ne">लग-आउट</span>
+                            </button>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </nav>
+    </header>
 
-<section id="members" style="background:#f1f5f9">
-    <div style="text-align:center; margin-bottom:60px;">
-        <span class="section-tag">Community Wall</span>
-        <h2 class="section-title">Honored Citizens</h2>
-    </div>
-    <div id="memberGrid" class="card-grid">
-        <p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">Synchronizing community data...</p>
-    </div>
-</section>
+    <main id="main">
+        <section class="hero" id="home">
+            <div class="bg-blur-blob bg-blur-blob-1"></div>
+            <div class="bg-blur-blob bg-blur-blob-2"></div>
+            <div class="hero-inner">
+                <div>
+                    <span class="eyebrow"><i data-lucide="sparkles"></i>
+                        <span class="lang-en">Official Community Portal</span>
+                        <span class="lang-ne">आधिकारिक सामुदायिक पोर्टल</span>
+                    </span>
+                    <h1>
+                        <span class="lang-ne">सदस्य, संस्कार र सेवा जोड्ने डिजिटल घर।</span>
+                        <span class="lang-en">A modern digital home for our community.</span>
+                    </h1>
+                    <p class="hero-lead">
+                        <span class="lang-ne">कमलापुरी वैश्य समाज, नेपाललाई आधुनिक, सुरक्षित र उपयोगी प्लेटफर्ममा
+                            ल्याउँदै सदस्य प्रोफाइल, परिवार विवरण, सूचना, कार्यक्रम र समाजसेवालाई एउटै ठाउँमा
+                            जोडौं।</span>
+                        <span class="lang-en">A trusted portal where members can connect, update their profiles,
+                            discover events, and strengthen our shared identity.</span>
+                    </p>
+                    <div class="hero-actions">
+                        <a class="btn btn-gold" href="#join"><i data-lucide="user-plus"></i>
+                            <span class="lang-en">Join Membership</span>
+                            <span class="lang-ne">सदस्यता लिनुहोस्</span>
+                        </a>
+                        <button class="btn btn-light" type="button" data-open-modal="login"><i data-lucide="log-in"></i>
+                            <span class="lang-en">Member Login</span>
+                            <span class="lang-ne">सदस्य लगइन</span>
+                        </button>
+                    </div>
+                </div>
 
-<section id="enroll">
-    <div class="grid-2">
-        <div>
-            <span class="section-tag">Membership</span>
-            <h2 class="section-title">Initiate Your Digital Identity</h2>
-            <p style="color:#64748b; margin-bottom:30px;">Become part of the sovereign network. Fill out the enrollment form to be reviewed by our community administrators. Once verified, your professional profile will be visible to our global directory.</p>
-            <div style="background:var(--primary); color:white; padding:30px; border-radius:20px;">
-                <h4 style="margin-bottom:10px;">Why Join?</h4>
-                <ul style="list-style:none; font-size:0.9rem; opacity:0.9; display: flex; flex-direction: column; gap: 8px;">
-                    <li>✓ Professional networking opportunities</li>
-                    <li>✓ Private community events access</li>
-                    <li>✓ Lineage & Heritage documentation</li>
-                    <li>✓ Secure identity verification</li>
+                <aside class="hero-panel" aria-label="Community highlights">
+                    <h2>
+                        <span class="lang-en">Portal Features</span>
+                        <span class="lang-ne">पोर्टल सुविधाहरू</span>
+                    </h2>
+                    <ul class="quick-list">
+                        <li><i data-lucide="badge-check"></i><span>
+                                <span class="lang-en">Verified member directory and profile updates</span>
+                                <span class="lang-ne">प्रमाणित सदस्य निर्देशिका र प्रोफाइल अद्यावधिक</span>
+                            </span></li>
+                        <li><i data-lucide="network"></i><span>
+                                <span class="lang-en">Family, district and chapter-wise community network</span>
+                                <span class="lang-ne">परिवार, जिल्ला र शाखागत सामुदायिक सञ्जाल</span>
+                            </span></li>
+                        <li><i data-lucide="calendar-days"></i><span>
+                                <span class="lang-en">Events, notices, blood donation and social programs</span>
+                                <span class="lang-ne">कार्यक्रम, सूचना, रक्तदान र सामाजिक कार्यक्रम</span>
+                            </span></li>
+                        <li><i data-lucide="shield-check"></i><span>
+                                <span class="lang-en">Secure admin workflow and role-based access</span>
+                                <span class="lang-ne">सुरक्षित प्रशासन र भूमिका-आधारित पहुँच</span>
+                            </span></li>
+                    </ul>
+                </aside>
+            </div>
+
+            <div class="hero-stats" aria-label="Community statistics">
+                <div class="stat"><strong>77+</strong><span>
+                        <span class="lang-en">Districts to connect</span>
+                        <span class="lang-ne">जिल्लाहरू जोडिएका</span>
+                    </span></div>
+                <div class="stat"><strong>1</strong><span>
+                        <span class="lang-en">Secure member portal</span>
+                        <span class="lang-ne">सुरक्षित सदस्य पोर्टल</span>
+                    </span></div>
+                <div class="stat"><strong>24/7</strong><span>
+                        <span class="lang-en">Information access</span>
+                        <span class="lang-ne">जानकारी उपलब्ध</span>
+                    </span></div>
+                <div class="stat"><strong>100%</strong><span>
+                        <span class="lang-en">Community focused</span>
+                        <span class="lang-ne">समुदायकेन्द्रित</span>
+                    </span></div>
+            </div>
+        </section>
+
+        <section id="about">
+            <div class="section-inner grid-2">
+                <img class="feature-image" src="/static/hero.png" alt="कमलापुरी वैश्य समाज नेपालको समुदाय भेटघाट"
+                    onerror="this.src='https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=1200&q=80'">
+                <div>
+                    <span class="section-tag">About The Samaj</span>
+                    <h2 class="section-title">परम्परा जोगाउने, नयाँ पुस्तालाई जोड्ने।</h2>
+                    <p class="section-copy">यो वेबसाइट समाजको आधिकारिक डिजिटल केन्द्रको रूपमा डिजाइन गरिएको छ, जहाँ
+                        सदस्यता, प्रोफाइल, संस्था सूचना र नेतृत्व व्यवस्थापन सजिलो हुन्छ। <span class="en-copy">Designed
+                            as the official digital center for membership, announcements, leadership coordination and
+                            community growth.</span></p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <i data-lucide="users-round"></i>
+                            <div>
+                                <strong>Member Self-Service / एकीकृत सदस्यता</strong>
+                                <p>Members can log in and update personal details, profession, district, business and
+                                    bio.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <i data-lucide="landmark"></i>
+                            <div>
+                                <strong>Trusted Administration / संस्थागत विश्वसनीयता</strong>
+                                <p>Admins can approve new members, review profile updates and manage directory
+                                    visibility.</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <i data-lucide="heart-handshake"></i>
+                            <div>
+                                <strong>Service & Opportunity / समाजसेवा र अवसर</strong>
+                                <p>Programs, support campaigns, education, health and business networking can be
+                                    organized clearly.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="muted-band" id="services">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <span class="section-tag">Services / मुख्य सेवा</span>
+                        <h2 class="section-title">Useful tools for everyday community work.</h2>
+                    </div>
+                    <p class="section-copy">समाजको सदस्यता, सूचना, कार्यक्रम र निर्देशिकालाई एउटै व्यवस्थित अनुभवमा
+                        ल्याउने modules। <span class="en-copy">A complete foundation for membership, announcements,
+                            events and verified community records.</span></p>
+                </div>
+                <div class="card-grid">
+                    <article class="card">
+                        <span class="card-icon"><i data-lucide="users-round"></i></span>
+                        <h3>Member Directory</h3>
+                        <p>Search verified profiles, connect with community members, and view local chapter records.</p>
+                    </article>
+                    <article class="card">
+                        <span class="card-icon"><i data-lucide="megaphone"></i></span>
+                        <h3>News & Announcements</h3>
+                        <p>Stay informed on community events, notices, blood donation drives, and cultural programs.</p>
+                    </article>
+                    <article class="card">
+                        <span class="card-icon"><i data-lucide="briefcase-business"></i></span>
+                        <h3>Business Directory</h3>
+                        <p>Discover and support local entrepreneurs, services, and professionals in the community.</p>
+                    </article>
+                    <article class="card">
+                        <span class="card-icon"><i data-lucide="badge-check"></i></span>
+                        <h3>Membership Benefits</h3>
+                        <p>Create a verified account, join our family networks, and access portal social services.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="directory">
+            <div class="section-inner">
+                <div class="section-head">
+                    <div>
+                        <span class="section-tag">
+                            <span class="lang-en">Member Directory</span>
+                            <span class="lang-ne">सदस्य निर्देशिका</span>
+                        </span>
+                        <h2 class="section-title">
+                            <span class="lang-en">A verified public identity for the community.</span>
+                            <span class="lang-ne">समुदायको लागि प्रमाणित सार्वजनिक परिचय।</span>
+                        </h2>
+                    </div>
+                    <p class="section-copy">
+                        <span class="lang-ne">सदस्यको अनुमति अनुसार नाम, जिल्ला, पेशा र छोटो परिचय मात्र सार्वजनिक
+                            देखाउन सकिन्छ।</span>
+                        <span class="lang-en">Only approved profile fields appear publicly, based on member consent and
+                            admin review.</span>
+                    </p>
+                </div>
+                <div class="directory-toolbar">
+                    <label class="search-box" for="directorySearch">
+                        <i data-lucide="search"></i>
+                        <input id="directorySearch" type="search"
+                            data-placeholder-ne="नाम, जिल्ला वा पेशाद्वारा खोज्नुहोस्"
+                            data-placeholder-en="Search by name, district or profession"
+                            placeholder="नाम, जिल्ला वा पेशाद्वारा खोज्नुहोस्">
+                    </label>
+                    <button class="btn btn-outline" type="button" id="refreshDirectory"><i data-lucide="refresh-cw"></i>
+                        <span class="lang-en">Refresh</span>
+                        <span class="lang-ne">ताजा गर्नुहोस्</span>
+                    </button>
+                </div>
+                <div class="member-grid" id="memberGrid" aria-live="polite"></div>
+            </div>
+        </section>
+
+        <section class="muted-band" id="events">
+            <div class="section-inner grid-2">
+                <div>
+                    <span class="section-tag">Events & Notices / कार्यक्रम</span>
+                    <h2 class="section-title">Active community, clear communication.</h2>
+                    <p class="section-copy">Admin ले सूचनाहरू, सभा, सामाजिक कार्यक्रम र अभियानहरू यही portal बाट publish
+                        गर्न सक्छन्। <span class="en-copy">A clean communication space for meetings, programs, campaigns
+                            and important updates.</span></p>
+                </div>
+                <div class="timeline">
+                    <article class="timeline-item">
+                        <strong>Annual General Meeting</strong>
+                        <p>Membership updates, reports and future planning discussion.</p>
+                    </article>
+                    <article class="timeline-item">
+                        <strong>Youth Entrepreneur Meetup</strong>
+                        <p>Business, career guidance and networking session.</p>
+                    </article>
+                    <article class="timeline-item">
+                        <strong>Community Service Campaign</strong>
+                        <p>Blood donation, health camps and student support programs.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="join">
+            <div class="section-inner grid-2">
+                <div>
+                    <span class="section-tag">
+                        <span class="lang-en">Membership Application</span>
+                        <span class="lang-ne">सदस्यता आवेदन</span>
+                    </span>
+                    <h2 class="section-title">
+                        <span class="lang-en">Start your digital membership.</span>
+                        <span class="lang-ne">आफ्नो डिजिटल सदस्यता सुरु गर्नुहोस्।</span>
+                    </h2>
+                    <p class="section-copy">
+                        <span class="lang-ne">आवेदन प्रशासक प्रमाणीकरण कतारमा जान्छ। स्वीकृत भएपछि सदस्यले लगइन गरी
+                            आफ्नो प्रोफाइल अपडेट गर्न सक्छन्।</span>
+                        <span class="lang-en">After approval, members can log in and manage their own profile from the
+                            portal.</span>
+                    </p>
+                    <div class="feature-list">
+                        <div class="feature-item"><i data-lucide="check-circle-2"></i><span>
+                                <span class="lang-en">Profile approval workflow</span>
+                                <span class="lang-ne">प्रोफाइल स्वीकृति प्रक्रिया</span>
+                            </span></div>
+                        <div class="feature-item"><i data-lucide="check-circle-2"></i><span>
+                                <span class="lang-en">Member self-service dashboard</span>
+                                <span class="lang-ne">सदस्य स्व-सेवा ड्यासबोर्ड</span>
+                            </span></div>
+                        <div class="feature-item"><i data-lucide="check-circle-2"></i><span>
+                                <span class="lang-en">Public visibility control</span>
+                                <span class="lang-ne">सार्वजनिक दृश्यता नियन्त्रण</span>
+                            </span></div>
+                    </div>
+                </div>
+
+                <div class="form-panel">
+                    <div class="notice" id="enrollNotice"></div>
+                    <form id="enrollmentForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="enrollName">
+                                    <span class="lang-ne">पूरा नाम</span>
+                                    <span class="lang-en">Full Name</span>
+                                </label>
+                                <input id="enrollName" name="full_name" autocomplete="name" required>
+                            </div>
+                            <div class="field">
+                                <label for="enrollEmail">Email</label>
+                                <input id="enrollEmail" name="email" type="email" autocomplete="email" required>
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="enrollContact">
+                                    <span class="lang-ne">सम्पर्क नम्बर</span>
+                                    <span class="lang-en">Contact Number</span>
+                                </label>
+                                <input id="enrollContact" name="contact" autocomplete="tel" required>
+                            </div>
+                            <div class="field">
+                                <label for="enrollDistrict">
+                                    <span class="lang-ne">जिल्ला / शाखा</span>
+                                    <span class="lang-en">District / Chapter</span>
+                                </label>
+                                <input id="enrollDistrict" name="district" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="enrollOccupation">
+                                <span class="lang-ne">पेशा / व्यवसाय</span>
+                                <span class="lang-en">Occupation / Business</span>
+                            </label>
+                            <input id="enrollOccupation" name="occupation" required>
+                        </div>
+                        <div class="field">
+                            <label for="enrollBio">
+                                <span class="lang-ne">छोटो परिचय</span>
+                                <span class="lang-en">Short Bio</span>
+                            </label>
+                            <textarea id="enrollBio" name="bio" rows="4"></textarea>
+                        </div>
+                        <div class="field">
+                            <label for="enrollPassword">
+                                <span class="lang-ne">लगइन पासवर्ड</span>
+                                <span class="lang-en">Login Password</span>
+                            </label>
+                            <input id="enrollPassword" name="password" type="password" autocomplete="new-password"
+                                required minlength="8">
+                        </div>
+                        <button class="btn btn-primary" type="submit"><i data-lucide="send"></i>
+                            <span class="lang-ne">आवेदन पठाउनुहोस्</span>
+                            <span class="lang-en">Submit Application</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact-band" id="contact">
+            <div class="section-inner grid-2">
+                <div>
+                    <span class="section-tag">
+                        <span class="lang-en">Contact Us</span>
+                        <span class="lang-ne">सम्पर्क गर्नुहोस्</span>
+                    </span>
+                    <h2 class="section-title">
+                        <span class="lang-en">Connect directly with the Samaj.</span>
+                        <span class="lang-ne">समाजसँग प्रत्यक्ष सम्पर्क गर्नुहोस्।</span>
+                    </h2>
+                    <p class="section-copy">
+                        <span class="lang-ne">सदस्यता, कार्यक्रम, प्रोफाइल प्रमाणीकरण वा वेबसाइट सम्बन्धी जानकारीका लागि
+                            सम्पर्क गर्नुहोस्।</span>
+                        <span class="lang-en">For membership, events, profile verification or portal support, reach out
+                            to the team.</span>
+                    </p>
+                    <ul class="contact-list">
+                        <li><i data-lucide="mail"></i> support@kvson.org</li>
+                        <li><i data-lucide="map-pin"></i> Kathmandu, Nepal</li>
+                        <li><i data-lucide="phone"></i> +977-98XXXXXXXX</li>
+                    </ul>
+                </div>
+                <div class="contact-card">
+                    <form id="contactForm">
+                        <div class="field">
+                            <label for="contactName">
+                                <span class="lang-ne">नाम</span>
+                                <span class="lang-en">Name</span>
+                            </label>
+                            <input id="contactName" required>
+                        </div>
+                        <div class="field">
+                            <label for="contactEmail">Email</label>
+                            <input id="contactEmail" type="email" required>
+                        </div>
+                        <div class="field">
+                            <label for="contactMessage">
+                                <span class="lang-ne">सन्देश</span>
+                                <span class="lang-en">Message</span>
+                            </label>
+                            <textarea id="contactMessage" required></textarea>
+                        </div>
+                        <button class="btn btn-gold" type="submit"><i data-lucide="message-circle"></i>
+                            <span class="lang-ne">सन्देश पठाउनुहोस्</span>
+                            <span class="lang-en">Send Message</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div>
+                <a class="brand" href="#home">
+                    <span class="brand-mark"><img src="favicon.png" alt="" aria-hidden="true"></span>
+                    <span class="brand-text">
+                        <strong>कमलापुरी वैश्य समाज, नेपाल</strong>
+                        <span class="lang-en">Kamlapuri Vaishya Samaj Nepal</span>
+                    </span>
+                </a>
+                <p style="margin-top: 16px;">
+                    <span class="lang-ne">समुदाय, संस्कार, सेवा र अवसरलाई डिजिटल रूपमा जोड्ने आधिकारिक पोर्टल।</span>
+                    <span class="lang-en">The official portal connecting community, culture, service and opportunity
+                        digitally.</span>
+                </p>
+            </div>
+            <div>
+                <h3>
+                    <span class="lang-en">Quick Links</span>
+                    <span class="lang-ne">द्रुत लिङ्कहरू</span>
+                </h3>
+                <ul>
+                    <li><a href="#about">
+                            <span class="lang-ne">हाम्रो समाज</span>
+                            <span class="lang-en">Our Samaj</span>
+                        </a></li>
+                    <li><a href="#directory">
+                            <span class="lang-ne">सदस्य निर्देशिका</span>
+                            <span class="lang-en">Member Directory</span>
+                        </a></li>
+                    <li><a href="#join">
+                            <span class="lang-ne">सदस्यता</span>
+                            <span class="lang-en">Join Membership</span>
+                        </a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Portal</h3>
+                <ul>
+                    <li><button class="btn btn-outline" type="button" data-open-modal="login">
+                            <span class="lang-ne">सदस्य लगइन</span>
+                            <span class="lang-en">Member Login</span>
+                        </button></li>
+                    <li><a href="#contact">
+                            <span class="lang-ne">सहयोग</span>
+                            <span class="lang-en">Support</span>
+                        </a></li>
+                    <li><a href="#events">
+                            <span class="lang-ne">कार्यक्रमहरू</span>
+                            <span class="lang-en">Events</span>
+                        </a></li>
                 </ul>
             </div>
         </div>
-        <div class="form-container">
-            <form id="enrollmentForm" onsubmit="handleEnrollment(event)">
-                <div class="form-grid">
-                    <input id="enrollName" placeholder="Full Name" required>
-                    <input type="email" id="enrollEmail" placeholder="Email Address" required>
+        <div class="footer-bottom">
+            <span class="lang-ne">सर्वाधिकार &copy; २०२६ कमलापुरी वैश्य समाज, नेपाल। सर्वाधिकार सुरक्षित।</span>
+            <span class="lang-en">Copyright &copy; 2026 Kamlapuri Vaishya Samaj, Nepal. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <div class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+        <div class="modal-content">
+            <div class="modal-head">
+                <div>
+                    <span class="section-tag">Member Access</span>
+                    <h2 id="loginTitle">Member Login / सदस्य Login</h2>
                 </div>
-                <div class="form-grid">
-                    <input id="enrollContact" placeholder="Contact Number" required>
-                    <input type="password" id="enrollPassword" placeholder="Access Key" required>
+                <button class="icon-button" type="button" data-close-modal aria-label="Close login modal"><i
+                        data-lucide="x"></i></button>
+            </div>
+            <div class="login-helper">
+                Real-time security authentication enabled. Use local demo buttons below for instant developer sandbox
+                access.
+            </div>
+            <div class="notice error" id="loginNotice"></div>
+            <form id="loginForm">
+                <div class="field">
+                    <label for="loginEmail">Email</label>
+                    <input id="loginEmail" type="email" autocomplete="email" required>
                 </div>
-                <input id="enrollDistrict" placeholder="District / Chapter" required>
-                <input id="enrollOccupation" placeholder="Occupation / Role" required>
-                <textarea id="enrollBio" placeholder="Professional Bio / Heritage Description" rows="4"></textarea>
-                <button type="submit" class="btn-submit">Submit Enrollment</button>
+                <div class="field">
+                    <label for="loginPassword">Password</label>
+                    <input id="loginPassword" type="password" autocomplete="current-password" required>
+                </div>
+                <button class="btn btn-primary" type="submit"><i data-lucide="log-in"></i> Login</button>
+                <div class="demo-actions" id="demoLoginActions">
+                    <button class="btn btn-outline" type="button" data-demo-login="member"><i data-lucide="user"></i>
+                        Demo Member</button>
+                    <button class="btn btn-outline" type="button" data-demo-login="admin"><i data-lucide="shield"></i>
+                        Demo Admin</button>
+                </div>
             </form>
         </div>
     </div>
-</section>
 
-<section id="contact">
-    <div class="grid-2" style="background:var(--dark); color:white; border-radius:40px; padding:80px; overflow:hidden; position:relative;">
-        <div>
-            <span class="section-tag" style="color:var(--gold)">Connect</span>
-            <h2 class="section-title">Get in Touch</h2>
-            <p style="opacity:0.8; margin-bottom:40px;">Have questions about the KVSON network or membership? Our team is here to assist.</p>
-            <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
-                <i data-lucide="mail"></i> <span>support@kvson.org</span>
-            </div>
-            <div style="display:flex; align-items:center; gap:15px;">
-                <i data-lucide="map-pin"></i> <span>Kathmandu, Nepal</span>
-            </div>
-        </div>
-        <div class="form-container" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:40px;">
-            <form onsubmit="event.preventDefault(); alert('Message sent successfully!'); this.reset();">
-                <input style="background:transparent; color:white;" placeholder="Your Name" required>
-                <input type="email" style="background:transparent; color:white;" placeholder="Your Email" required>
-                <textarea style="background:transparent; color:white;" placeholder="How can we help?" required></textarea>
-                <button type="submit" class="btn-submit" style="background:var(--gold); color:var(--dark);">Send Message</button>
-            </form>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <div class="footer-grid">
-        <div>
-            <div class="logo">KV<span>SON</span></div>
-            <p style="margin-top:20px; color:#94a3b8;">The premiere digital hub for the global Kamlapuri Vaishya community.</p>
-        </div>
-        <div>
-            <h4 style="margin-bottom:20px;">Portal</h4>
-            <ul style="list-style:none; color:#94a3b8; line-height:2;">
-                <li><a href="#" style="color:inherit; text-decoration:none;">Home</a></li>
-                <li><a href="#about" style="color:inherit; text-decoration:none;">Vision</a></li>
-                <li><a href="#members" style="color:inherit; text-decoration:none;">Directory</a></li>
-            </ul>
-        </div>
-        <div>
-            <h4 style="margin-bottom:20px;">Legal</h4>
-            <ul style="list-style:none; color:#94a3b8; line-height:2;">
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>Membership Rules</li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        &copy; 2026 KVSON Global. All Rights Reserved. | Managed by Sovereign Leads.
-    </div>
-</footer>
-
-<!-- MODAL: LOGIN -->
-<div class="modal" id="modal-login">
-    <div class="modal-content">
-        <h2 style="font-family:'Oswald'; margin-bottom:20px; text-transform: uppercase;">Portal Access</h2>
-        <div id="login-error" style="color:#ef4444; margin-bottom:15px; font-size:0.85rem; display:none; background:#fee2e2; padding:10px; border-radius:6px;"></div>
-        <input type="email" id="loginEmail" placeholder="Email" required>
-        <input type="password" id="loginPassword" placeholder="Access Key" required>
-        <button onclick="handleLogin()" class="btn-submit">Login</button>
-        <button onclick="closeModal()" style="background:none; border:none; width:100%; margin-top:15px; color:var(--text-muted); cursor:pointer; font-weight:600;">Cancel</button>
-    </div>
-</div>
-
-<!-- MODAL: ADMINISTRATIVE PLATFORM -->
-<div class="modal" id="modal-admin">
-    <div class="modal-content admin-panel">
-        <div class="admin-header">
-            <div>
-                <h2 style="font-family:'Oswald'; text-transform: uppercase; letter-spacing: 1px;">Sovereign Control Center</h2>
-                <p style="font-size:0.8rem; color:var(--text-muted)">Manage verification systems and community accounts.</p>
-            </div>
-            <button onclick="closeModal()" style="background:none; border:none; cursor:pointer; color:var(--text-muted)"><i data-lucide="x"></i></button>
-        </div>
-
-        <!-- System View Toggle Switches -->
-        <div class="admin-tabs">
-            <button class="tab-btn active" id="tabRequests" onclick="switchAdminTab('requests')">
-                <i data-lucide="bell"></i> Enrollment Requests <span class="badge" id="countRequests">0</span>
-            </button>
-            <button class="tab-btn" id="tabDirectory" onclick="switchAdminTab('directory')">
-                <i data-lucide="shield-check"></i> Active Citizens <span class="badge gold" id="countCitizens">0</span>
-            </button>
-        </div>
-
-        <div class="admin-layout">
-            <!-- Left Navigation Roster -->
-            <div class="admin-sidebar">
-                <div class="admin-search-box">
-                    <i data-lucide="search"></i>
-                    <input type="text" id="adminSearch" placeholder="Search profiles..." oninput="filterRoster()">
-                </div>
-                <div id="adminMemberList" class="member-list-wrapper">
-                    <!-- Dynamic Profiles Generated Here -->
-                </div>
-            </div>
-            
-            <!-- Right Detailed Operations Roster -->
-            <div class="admin-main-view" id="adminMainView">
-                <div class="empty-state">
-                    <i data-lucide="inbox" style="width:48px; height:48px;"></i>
-                    <p>Select a profile from the left pane to initialize processing actions.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // System Target Endpoint Routing Architecture
-    const API_BASE = window.location.origin + '/api';
-
-    // Core Data Matrices
-    let appState = {
-        user: JSON.parse(localStorage.getItem('kvson_user')) || null,
-        currentTab: 'requests', // 'requests' | 'directory'
-        requestsRoster: [],
-        citizensRoster: [],
-        selectedProfileId: null
-    };
-
-    function init() {
-        lucide.createIcons();
-        evaluateAuthState();
-        fetchPublicDirectory();
-        
-        // --- PROTOTYPE BACKDOOR FOR INSTANT TESTING ---
-        // If you login with this email/password in the modal, it flags you immediately as an admin
-        window.handleLoginBackdoor = (email, password) => {
-            if (email === 'admin@kvson.org' && password === 'admin123') {
-                const mockAdmin = { full_name: "Sovereign Lead", email: "admin@kvson.org", role: "admin", token: "mock-jwt" };
-                localStorage.setItem('kvson_user', JSON.stringify(mockAdmin));
-                appState.user = mockAdmin;
-                location.reload();
-                return true;
-            }
-            return false;
-        };
-    }
-
-    function evaluateAuthState() {
-        const authBtn = document.getElementById('authBtn');
-        const adminBtn = document.getElementById('adminBtn');
-        if (appState.user) {
-            authBtn.innerText = 'Logout';
-            adminBtn.style.display = appState.user.role === 'admin' ? 'block' : 'none';
-        } else {
-            authBtn.innerText = 'Login';
-            adminBtn.style.display = 'none';
-        }
-    }
-
-    function toggleAuthPortal() {
-        if (appState.user) {
-            localStorage.removeItem('kvson_user');
-            appState.user = null;
-            location.reload();
-        } else {
-            openModal('login');
-        }
-    }
-
-    // --- PUBLIC INTERFACE SYSTEMS ---
-    async function fetchPublicDirectory() {
-        try {
-            const res = await fetch(`${API_BASE}/directory`);
-            if (!res.ok) throw new Error();
-            const data = await res.json();
-            
-            const grid = document.getElementById('memberGrid');
-            if(data.length === 0) {
-                grid.innerHTML = `<p style="text-align:center; grid-column:1/-1; color:var(--text-muted)">No verified citizens visible on the community wall.</p>`;
-                return;
-            }
-
-            grid.innerHTML = data.slice(0, 6).map(m => `
-                <div class="info-card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                        <div class="icon-circle">${m.full_name.charAt(0).toUpperCase()}</div>
-                        <span style="font-size:0.7rem; font-weight:800; color:var(--gold); text-transform:uppercase; border:1px solid var(--gold); padding:2px 8px; border-radius:4px;">${m.role}</span>
-                    </div>
-                    <h3 style="font-family:'Oswald'; margin-bottom:5px; text-transform:uppercase; font-size:1.3rem;">${m.full_name}</h3>
-                    <p style="color:var(--primary); font-weight:700; font-size:0.8rem; margin-bottom:15px; text-transform:uppercase;">${m.occupation}</p>
-                    <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">${m.bio || 'Verified member of the KVSON community.'}</p>
-                    <div style="display:flex; align-items:center; gap:8px; color:#94a3b8; font-size:0.8rem;">
-                        <i data-lucide="map-pin" style="width:14px; height:14px;"></i> ${m.district}
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        } catch (err) {
-            // Mock Data Array for visualization during setup phases
-            const mockPublicData = [
-                { full_name: "Priyanshi Shrestha", role: "admin", occupation: "Full-Stack System Architect", district: "Kathmandu", bio: "Building live architectural frameworks for community operational portals." },
-                { full_name: "Ram Narayan Vaishya", role: "member", occupation: "Merchant Director", district: "Parsa", bio: "Focused on expansion matrices within South Asian commerce circuits." }
-            ];
-            renderMockPublicGrid(mockPublicData);
-        }
-    }
-
-    function renderMockPublicGrid(arr) {
-        document.getElementById('memberGrid').innerHTML = arr.map(m => `
-            <div class="info-card">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                    <div class="icon-circle">${m.full_name.charAt(0)}</div>
-                    <span style="font-size:0.7rem; font-weight:800; color:var(--gold); text-transform:uppercase; border:1px solid var(--gold); padding:2px 8px; border-radius:4px;">${m.role}</span>
-                </div>
-                <h3 style="font-family:'Oswald'; margin-bottom:5px; text-transform:uppercase;">${m.full_name}</h3>
-                <p style="color:var(--primary); font-weight:700; font-size:0.8rem; margin-bottom:15px; text-transform:uppercase;">${m.occupation}</p>
-                <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">${m.bio}</p>
-                <div style="display:flex; align-items:center; gap:8px; color:#94a3b8; font-size:0.8rem;">
-                    <i data-lucide="map-pin" style="width:14px"></i> ${m.district}
-                </div>
-            </div>
-        `).join('');
-        lucide.createIcons();
-    }
-
-   async function handleLogin() {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    const errorDiv = document.getElementById('login-error');
-    errorDiv.style.display = 'none';
-    
-    // 1. Check local backdoor credentials BEFORE doing any server fetches
-    if (email === 'admin@kvson.org' && password === 'admin123') {
-        const mockAdmin = { 
-            full_name: "Sovereign Lead", 
-            email: "admin@kvson.org", 
-            role: "admin", 
-            token: "mock-jwt" 
-        };
-        localStorage.setItem('kvson_user', JSON.stringify(mockAdmin));
-        appState.user = mockAdmin;
-        closeModal();
-        evaluateAuthState();
-        location.reload();
-        return; // Exits early so no fetch request runs
-    }
-
-    // 2. Network handling (Only runs when you are ready to use a real database)
-    try {
-        const res = await fetch(`${API_BASE}/login`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email, password})
-        });
-
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            throw new Error(`Server returned status ${res.status}. Your backend route is not built yet.`);
-        }
-
-        const data = await res.json();
-        if(res.ok) {
-            localStorage.setItem('kvson_user', JSON.stringify(data));
-            location.reload();
-        } else { 
-            throw new Error(data.error || 'Authentication denied'); 
-        }
-    } catch (err) {
-        errorDiv.innerText = err.message || 'Connection offline';
-        errorDiv.style.display = 'block';
-    }
-}
-
-    async function handleEnrollment(e) {
-        e.preventDefault();
-        const payload = {
-            full_name: document.getElementById('enrollName').value,
-            email: document.getElementById('enrollEmail').value,
-            contact: document.getElementById('enrollContact').value,
-            password: document.getElementById('enrollPassword').value,
-            district: document.getElementById('enrollDistrict').value,
-            occupation: document.getElementById('enrollOccupation').value,
-            bio: document.getElementById('enrollBio').value
-        };
-
-        try {
-            const res = await fetch(`${API_BASE}/enroll`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            });
-            if(res.ok) {
-                alert('Enrollment submitted! Your application is routing into the Admin Verification queue.');
-                document.getElementById('enrollmentForm').reset();
-            } else { alert('Submission validation failure.'); }
-        } catch(err) {
-            // Mock interaction logic for decoupled sandboxes
-            appState.requestsRoster.push({ id: Date.now(), ...payload, is_verified: false, role: 'member' });
-            alert('[Sandbox Mode] Request successfully captured into internal memory workspace array.');
-            document.getElementById('enrollmentForm').reset();
-        }
-    }
-
-    // --- ADMINISTRATIVE ENGINE SYSTEMS ---
-    async function syncAdminDataRosters() {
-        if (!appState.user || appState.user.role !== 'admin') return;
-        
-        try {
-            const res = await fetch(`${API_BASE}/admin/all-profiles`, {
-                headers: { 'Authorization': `Bearer ${appState.user.token}` }
-            });
-            const allProfiles = await res.json();
-            
-            // Supabase split filtering logic (verified vs non-verified states)
-            appState.requestsRoster = allProfiles.filter(p => !p.is_verified);
-            appState.citizensRoster = allProfiles.filter(p => p.is_verified);
-        } catch (err) {
-            // Seed arrays for development workflows
-            if(appState.requestsRoster.length === 0 && appState.citizensRoster.length === 0) {
-                appState.requestsRoster = [
-                    { id: 101, full_name: "Aman Prasad Shah", email: "aman@shah.com", contact: "+977-9851000000", district: "Birgunj", occupation: "Logistics Operator", bio: "Seeking registration connection with global trade clusters.", is_verified: false, role: 'member' }
-                ];
-                appState.citizensRoster = [
-                    { id: 1, full_name: "Priyanshi Shrestha", email: "admin@kvson.org", contact: "+977-9841000000", district: "Kathmandu", occupation: "Full-Stack Engineer", bio: "Sovereign data platform supervisor.", is_verified: true, role: 'admin' }
-                ];
-            }
-        }
-        
-        updateTabBadges();
-        renderSidebarRoster();
-    }
-
-    function updateTabBadges() {
-        document.getElementById('countRequests').innerText = appState.requestsRoster.length;
-        document.getElementById('countCitizens').innerText = appState.citizensRoster.length;
-    }
-
-    function switchAdminTab(targetTab) {
-        appState.currentTab = targetTab;
-        appState.selectedProfileId = null;
-        
-        document.getElementById('tabRequests').classList.toggle('active', targetTab === 'requests');
-        document.getElementById('tabDirectory').classList.toggle('active', targetTab === 'directory');
-        
-        document.getElementById('adminMainView').innerHTML = `
-            <div class="empty-state">
-                <i data-lucide="arrow-left" style="width:48px; height:48px;"></i>
-                <p>Select an entry from the tracking list layout.</p>
-            </div>
-        `;
-        
-        renderSidebarRoster();
-        lucide.createIcons();
-    }
-
-    function renderSidebarRoster() {
-        const container = document.getElementById('adminMemberList');
-        const activeArray = appState.currentTab === 'requests' ? appState.requestsRoster : appState.citizensRoster;
-        
-        if (activeArray.length === 0) {
-            container.innerHTML = `<div style="padding:40px 10px; text-align:center; color:var(--text-muted); font-size:0.9rem;">Roster view array empty.</div>`;
-            return;
-        }
-
-        container.innerHTML = activeArray.map(p => `
-            <button class="member-list-item ${appState.selectedProfileId === p.id ? 'active' : ''}" onclick="viewProfileDetails(${p.id})">
+    <div class="modal" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+        <div class="modal-content modal-wide">
+            <div class="modal-head">
                 <div>
-                    <h4>${p.full_name}</h4>
-                    <p>${p.district} • ${p.occupation}</p>
+                    <span class="section-tag">Member Dashboard</span>
+                    <h2 id="profileTitle">My Profile / मेरो Profile</h2>
                 </div>
-                <i data-lucide="chevron-right" style="width:16px; color:var(--text-muted)"></i>
-            </button>
-        `).join('');
-        lucide.createIcons();
-    }
-
-    function filterRoster() {
-        const query = document.getElementById('adminSearch').value.toLowerCase();
-        const baseArray = appState.currentTab === 'requests' ? appState.requestsRoster : appState.citizensRoster;
-        
-        const filtered = baseArray.filter(p => 
-            p.full_name.toLowerCase().includes(query) ||
-            p.district.toLowerCase().includes(query) ||
-            p.occupation.toLowerCase().includes(query)
-        );
-
-        const container = document.getElementById('adminMemberList');
-        if(filtered.length === 0) {
-            container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-muted); font-size:0.85rem;">No matching search matches.</div>`;
-            return;
-        }
-
-        container.innerHTML = filtered.map(p => `
-            <button class="member-list-item ${appState.selectedProfileId === p.id ? 'active' : ''}" onclick="viewProfileDetails(${p.id})">
-                <div>
-                    <h4>${p.full_name}</h4>
-                    <p>${p.district} • ${p.occupation}</p>
-                </div>
-                <i data-lucide="chevron-right" style="width:16px;"></i>
-            </button>
-        `).join('');
-        lucide.createIcons();
-    }
-
-    function viewProfileDetails(id) {
-        appState.selectedProfileId = id;
-        
-        // Dynamic active state layout rendering
-        document.querySelectorAll('.member-list-item').forEach((el, index) => {
-            const targetArray = appState.currentTab === 'requests' ? appState.requestsRoster : appState.citizensRoster;
-            el.classList.toggle('active', targetArray[index] && targetArray[index].id === id);
-        });
-
-        const activeArray = appState.currentTab === 'requests' ? appState.requestsRoster : appState.citizensRoster;
-        const record = activeArray.find(p => p.id === id);
-        if (!record) return;
-
-        const mainView = document.getElementById('adminMainView');
-
-        let operationalActions = '';
-        if (appState.currentTab === 'requests') {
-            operationalActions = `
-                <button class="btn-action success" onclick="processApplication(${record.id}, 'approve')">
-                    <i data-lucide="user-check"></i> Grant Verification & Citizenship
-                </button>
-                <button class="btn-action danger" onclick="processApplication(${record.id}, 'reject')">
-                    <i data-lucide="user-x"></i> Reject Request
-                </button>
-            `;
-        } else {
-            operationalActions = `
-                <button class="btn-action secondary" onclick="toggleAdministrativeAuthority(${record.id}, '${record.role}')">
-                    <i data-lucide="shield-alert"></i> Toggle Clearance Mode (${record.role.toUpperCase()})
-                </button>
-                <button class="btn-action danger" onclick="terminateCitizenRecord(${record.id})">
-                    <i data-lucide="trash-2"></i> Purge Account Array
-                </button>
-            `;
-        }
-
-        mainView.innerHTML = `
-            <div class="detail-card">
-                <span class="section-tag" style="color:var(--gold)">${appState.currentTab === 'requests' ? 'Pending Application Profile' : 'Verified Profile Matrix'}</span>
-                <h3 style="font-family:'Oswald'; font-size:2rem; text-transform:uppercase; color:var(--primary); margin-bottom:25px;">${record.full_name}</h3>
-                
-                <div class="detail-row"><span class="detail-label">Email Context:</span><span>${record.email}</span></div>
-                <div class="detail-row"><span class="detail-label">Contact Link:</span><span>${record.contact || 'Not Provided'}</span></div>
-                <div class="detail-row"><span class="detail-label">Chapter Location:</span><span>${record.district}</span></div>
-                <div class="detail-row"><span class="detail-label">Occupation Field:</span><span>${record.occupation}</span></div>
-                <div class="detail-row"><span class="detail-label">Identity Role Status:</span><strong>${record.role.toUpperCase()}</strong></div>
-                
-                <div style="margin-top:25px;">
-                    <span class="detail-label" style="display:block; margin-bottom:8px;">Bio & Heritage Context Data:</span>
-                    <div style="background:white; border:1px solid var(--border); padding:20px; border-radius:10px; font-size:0.95rem; color:#334155;">
-                        ${record.bio || 'Profile bio summary description missing from structural inputs.'}
+                <button class="icon-button" type="button" data-close-modal aria-label="Close profile modal"><i
+                        data-lucide="x"></i></button>
+            </div>
+            <div class="portal-layout">
+                <aside class="profile-summary">
+                    <div class="member-top">
+                        <span class="avatar" id="profileAvatar">K</span>
+                        <div>
+                            <h3 id="profileName">Member</h3>
+                            <p id="profileRole">Verified member</p>
+                        </div>
                     </div>
+                    <p id="profileMeta" class="section-copy"></p>
+                    <div class="profile-actions">
+                        <button class="btn btn-outline" type="button" id="logoutButton"><i data-lucide="log-out"></i>
+                            Logout</button>
+                    </div>
+                </aside>
+                <section class="form-panel" aria-label="Update member profile">
+                    <div class="notice" id="profileNotice"></div>
+                    <form id="profileForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="profileFullName">पूरा नाम</label>
+                                <input id="profileFullName" name="full_name" required>
+                            </div>
+                            <div class="field">
+                                <label for="profileContact">सम्पर्क नम्बर</label>
+                                <input id="profileContact" name="contact">
+                            </div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="profileDistrict">जिल्ला / Chapter</label>
+                                <input id="profileDistrict" name="district">
+                            </div>
+                            <div class="field">
+                                <label for="profileOccupation">पेशा / व्यवसाय</label>
+                                <input id="profileOccupation" name="occupation">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label for="profileBusiness">Business / संस्था</label>
+                            <input id="profileBusiness" name="business_name">
+                        </div>
+                        <div class="field">
+                            <label for="profileBio">छोटो परिचय</label>
+                            <textarea id="profileBio" name="bio"></textarea>
+                        </div>
+                        <button class="btn btn-primary" type="submit"><i data-lucide="save"></i> Profile Save
+                            गर्नुहोस्</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="adminModal" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+        <div class="modal-content modal-wide">
+            <div class="modal-head">
+                <div>
+                    <span class="section-tag">Admin Panel</span>
+                    <h2 id="adminTitle">समाज व्यवस्थापन Dashboard</h2>
                 </div>
+                <button class="icon-button" type="button" data-close-modal aria-label="Close admin panel"><i
+                        data-lucide="x"></i></button>
             </div>
-            <div class="admin-actions-pane">
-                ${operationalActions}
+            <div class="admin-tabs" role="tablist" aria-label="Admin views">
+                <button class="tab-btn active" type="button" data-admin-tab="requests"><i data-lucide="inbox"></i>
+                    Requests <span id="requestCount">0</span></button>
+                <button class="tab-btn" type="button" data-admin-tab="members"><i data-lucide="users"></i> Members <span
+                        id="memberCount">0</span></button>
             </div>
-        `;
-        lucide.createIcons();
-    }
-
-    // --- LIVE CONTROLLER BACKEND INTEGRATION ROUTERS ---
-    async function processApplication(id, executionVector) {
-        if (!confirm(`Execute application context structural resolution: [${executionVector.toUpperCase()}]?`)) return;
-
-        try {
-            const res = await fetch(`${API_BASE}/admin/resolve-request`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appState.user.token}` },
-                body: JSON.stringify({ id, action: executionVector })
-            });
-            if (!res.ok) throw new Error();
-            alert('Resolution processed inside Supabase table arrays.');
-        } catch (err) {
-            // Local fallback simulation processing logic
-            const targetIdx = appState.requestsRoster.findIndex(p => p.id === id);
-            if (targetIdx > -1) {
-                const matchedRecord = appState.requestsRoster[targetIdx];
-                appState.requestsRoster.splice(targetIdx, 1);
-                if (executionVector === 'approve') {
-                    matchedRecord.is_verified = true;
-                    appState.citizensRoster.push(matchedRecord);
-                }
-            }
-        }
-        
-        resetMainViewInterface();
-        updateTabBadges();
-        renderSidebarRoster();
-        fetchPublicDirectory();
-    }
-
-    async function toggleAdministrativeAuthority(id, activeRole) {
-        const assignedTargetRole = activeRole === 'admin' ? 'member' : 'admin';
-        if (!confirm(`Toggle permission access layers to: ${assignedTargetRole.toUpperCase()}?`)) return;
-
-        try {
-            const res = await fetch(`${API_BASE}/admin/alter-role`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${appState.user.token}` },
-                body: JSON.stringify({ id, role: assignedTargetRole })
-            });
-            if (!res.ok) throw new Error();
-        } catch (err) {
-            const citizen = appState.citizensRoster.find(p => p.id === id);
-            if (citizen) citizen.role = assignedTargetRole;
-        }
-
-        viewProfileDetails(id);
-        syncAdminDataRosters();
-    }
-
-    async function terminateCitizenRecord(id) {
-        if (!confirm("Permanently purge this profile container from the database? This deployment cannot be rolled back.")) return;
-
-        try {
-            const res = await fetch(`${API_BASE}/admin/purge-profile?id=${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${appState.user.token}` }
-            });
-            if (!res.ok) throw new Error();
-        } catch (err) {
-            const targetIdx = appState.citizensRoster.findIndex(p => p.id === id);
-            if (targetIdx > -1) appState.citizensRoster.splice(targetIdx, 1);
-        }
-
-        resetMainViewInterface();
-        updateTabBadges();
-        renderSidebarRoster();
-        fetchPublicDirectory();
-    }
-
-    function resetMainViewInterface() {
-        appState.selectedProfileId = null;
-        document.getElementById('adminMainView').innerHTML = `
-            <div class="empty-state">
-                <i data-lucide="check-circle" style="color:#15803d; width:48px; height:48px;"></i>
-                <p>Action deployed successfully. Roster structural array re-indexing complete.</p>
+            <div class="admin-layout">
+                <aside class="admin-sidebar">
+                    <label class="search-box" for="adminSearch">
+                        <i data-lucide="search"></i>
+                        <input id="adminSearch" type="search" placeholder="Search admin records">
+                    </label>
+                    <div class="roster-list" id="adminRoster"></div>
+                </aside>
+                <section class="admin-main" id="adminDetail" aria-live="polite"></section>
             </div>
-        `;
-        lucide.createIcons();
-    }
+        </div>
+    </div>
 
-    // --- WINDOW CONTROLS ---
-    function openModal(id) { 
-        document.getElementById('modal-' + id).style.display = 'flex'; 
-        if(id === 'admin') {
-            switchAdminTab('requests');
-            syncAdminDataRosters(); 
-        }
-    }
-    
-    function closeModal() { 
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
-    }
-    
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-    init();
-</script>
-
+    <!-- Core Modular Application Javascript -->
+    <script type="module" src="/assets/js/app.js"></script>
 </body>
+
 </html>
